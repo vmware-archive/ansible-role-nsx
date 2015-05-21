@@ -1,0 +1,30 @@
+---
+- name: vcinfo Setup xml
+  command: cp "{{ vc_xml }}" "{{ vc_tmp }}"
+
+- name: vcinfo create xml
+  xml: 
+    file: "{{ vc_tmp }}"
+    xpath: /vcInfo
+    add_children:
+          - ipAddress: "{{ vctr_host }}"
+          - userName: "{{ vuser }}"
+          - password: "{{ vpass }}"
+
+- name: vcinfo put request
+  uri:
+    url: "{{ nsx_vccon }}"
+    method: PUT
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file','/tmp/files/vcinfo.xml') }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+  register: vcinfooutput
+
+- name: vcinfo Set new fact 
+  set_fact:
+    vcc_auth_status: "{{ vcinfooutput.status }}"
+
+- name: remove tmp file
+  file: path="{{ vc_tmp }}" state=absent

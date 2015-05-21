@@ -1,0 +1,94 @@
+---
+- name: Prep 
+  wait_for: timeout=5
+
+- name: vxlan edge xml
+  command: cp "{{ vxlanc_xml }}" "{{ vxlanc_tmp }}"
+
+- name: vxlan parent elements xml
+  xml:
+    file: "{{ vxlanc_tmp }}"
+    xpath: /nwFabricFeatureConfig
+    add_children:
+           - featureId: "{{ vxlanb.featureId }}"
+           - resourceConfig: 
+
+- name: vxlan adding 1st subchildren to resourceConfig
+  xml: 
+    file: "{{ vxlanc_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig
+    add_children: 
+           - resourceId: "{{ edge_id }}"
+           - configSpec: 
+               class: "{{ vxlanb.configspeca }}"
+
+- name: vxlan adding 1st sub-sub-children to configspec
+  xml:
+    file: "{{ vxlanc_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec
+    add_children:
+           - switch: 
+           - vlanId: "{{ vxlanb.vlid }}"
+           - vmknicCount: "{{ vxlanb.vmcnt }}"
+           - ipPoolId: "{{ vxlanb.ippoolid }}"
+
+- name: vxlan adding 1st sub-sub-sub child to switch
+  xml:
+    file: "{{ vxlanc_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec/switch
+    add_children:
+           - objectId: "{{ maindvs_id }}"
+
+- name: vxlan adding 2nd parent resourceConfig
+  xml:
+    file: "{{ vxlanc_tmp }}"
+    xpath: /nwFabricFeatureConfig
+    add_children:
+           - resourceConfig:
+
+- name: vxlan adding 2nd subchildren to resourceConfig 
+  xml: 
+    file: "{{ vxlanc_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig
+    add_children: 
+           - resourceId: "{{ maindvs_id }}"
+           - configSpec:
+               class: "{{ vxlanb.vdscon }}"
+
+- name: vxlan adding 2nd sub-sub-children to configspec
+  xml:
+    file: "{{ vxlanc_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec
+    add_children:
+           - switch: 
+           - mtu: "{{ vxlanb.mtu }}"
+           - teaming: "{{ vxlanb.team }}"
+
+- name: vxlan adding 2nd sub-sub-sub child to switch
+  xml:
+    file: "{{ vxlanc_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec/switch
+    add_children:
+           - objectId: "{{ maindvs_id }}"
+
+- name: vxlan POST for Edge Cluster
+  uri:
+    url: "{{ nsx_inst_virt }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file','/tmp/files/vxlanc.xml') }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+  register: vxlanc_status
+
+- name: set fact for status
+  set_fact:
+    vxlanc_stat: "{{ vxlanc_status.status }}"
+
+- name: failure message
+  fail: msg="{{ vxlan_fail }}"
+  when: vxlanc_stat != "{{ success_status }}"
+
+- name: remove file
+  file: path="{{ vxlanc_tmp }}" state=absent

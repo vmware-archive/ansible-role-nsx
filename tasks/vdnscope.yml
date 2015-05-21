@@ -1,0 +1,86 @@
+---
+- name: Prep
+  wait_for: timeout=5
+
+- name: scope xml
+  command: cp "{{ vdnscope_xml }}" "{{ vdnscope_tmp }}"
+
+- name: scope parent elements xml
+  xml:
+    file: "{{ vdnscope_tmp }}"
+    xpath: /vdnScope
+    add_children:
+           - name: "{{ vdnscope.name }}"
+           - clusters: 
+
+- name: scope 1st child elements xml
+  xml:
+    file: "{{ vdnscope_tmp }}"
+    xpath: /vdnScope/clusters
+    add_children:
+           - cluster: 
+
+- name: scope 2st child elements xml
+  xml:
+    file: "{{ vdnscope_tmp }}"
+    xpath: /vdnScope/clusters/cluster
+    add_children:
+           - cluster:          
+
+- name: scope 3st child elements xml
+  xml:
+    file: "{{ vdnscope_tmp }}"
+    xpath: /vdnScope/clusters/cluster/cluster
+    add_children:
+           - objectId: "{{ edge_id }}"
+
+- name: scope 1st child elements xml
+  xml:
+    file: "{{ vdnscope_tmp }}"
+    xpath: /vdnScope/clusters
+    add_children:
+           - cluster: 
+
+- name: scope 2st child elements xml
+  xml:
+    file: "{{ vdnscope_tmp }}"
+    xpath: /vdnScope/clusters/cluster
+    add_children:
+           - cluster:          
+
+- name: scope 2st child elements xml
+  xml:
+    file: "{{ vdnscope_tmp }}"
+    xpath: /vdnScope/clusters/cluster/cluster
+    add_children:
+           - objectId: "{{ compt_id }}"
+
+- name: scope parent elements xml
+  xml:
+    file: "{{ vdnscope_tmp }}"
+    xpath: /vdnScope
+    add_children:
+           - controlPlaneMode: "{{ vdnscope.cast }}"
+
+- name: vdnscopes POST for Compt/Edge Cluster
+  uri:
+    url: "{{ nsx_scope }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file','/tmp/files/vdnscopes.xml') }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+  ignore_errors: yes
+  register: vdn_status
+
+- name: set fact for status
+  set_fact:
+    vdn_stat: "{{ vdn_status.status }}"
+
+- name: failure message
+  fail: msg="{{ vdn_fail }}"
+  when: vdn_stat != "{{ created_status }}"
+
+- name: Status Code
+  debug: msg="{{ vdn_status.status }}"

@@ -1,0 +1,20 @@
+---
+- name: GET vcconfig
+  uri:
+    url: "{{ nsx_vccon }}"
+    method: GET
+    return_content: yes
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+  register: vccout
+
+- name: get response
+  debug: msg="{{ vccout }}"
+
+- name: add to vccout
+  xml:
+    xmlstring: "{{ vccout.content }}"
+    xpath: /vcInfo
+    

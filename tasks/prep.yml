@@ -1,0 +1,11 @@
+---
+- name: create tmp dir
+  file: path="{{ nsx_tmp }}" state=directory mode=0775
+
+- name: verify tmp dir created
+  stat: path="{{ nsx_tmp }}"
+  register: p
+
+- name: debug
+  debug: msg="Path exists and is a directory"
+  when: p.stat.isdir is defined and p.stat.isdir

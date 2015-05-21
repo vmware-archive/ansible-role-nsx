@@ -1,0 +1,48 @@
+---
+- name: contrl_spec Setup xml
+  command: cp "{{ contrl_xml }}" "{{ contrl_tmp }}"
+  #when: inst_c_virt_status == "{{ success_status }}"
+
+- name: add elements to xml
+  xml:
+    file: "{{ contrl_tmp }}"
+    xpath: /controllerSpec
+    add_children:
+          - name: "{{ controller_name }}"
+          - description: "{{ controller_name }}"
+          - ipPoolId: "{{ cntrl_ippool }}"
+          - resourcePoolId: "{{ mgmt_id }}"
+          - datastoreId: "{{ ds_id }}"
+          - deployType: "{{ cntrl_deply }}"
+          - networkId: "{{ mgnet_id }}"
+          - password: "{{ cntrl_pass }}"
+
+- name: Create the controller 
+  uri:
+    url: "{{ nsx_controller }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file','/tmp/files/contrl_spec.xml') }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    return_content: yes
+  ignore_errors: yes
+  register: cntrl
+
+- name: create fact for status code 
+  set_fact:
+    cntrl_status: "{{ cntrl.status }}" 
+
+- name: Fail when staus not 201
+  fail: msg="{{ contrl_fail }}"
+  when: cntrl_status != "{{ contrl_status }}"
+
+- name: create fact for jobid 
+  set_fact:
+    jobid: "{{ cntrl.content }}"
+
+- name: remove file
+  file: path="{{ contrl_tmp }}" state=absent
+
+

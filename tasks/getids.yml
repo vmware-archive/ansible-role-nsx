@@ -1,0 +1,35 @@
+---
+#need to clean this up to have a variable for the file path
+# need to be a custom module for getting the ids
+- name: nsx managenemt cluster id
+  shell: python "{{ nsx_script_path }}" "{{ mgmt_name }}"
+  register: mgmt
+
+- name: nsx edge cluster id
+  shell: python "{{ nsx_script_path }}" "{{ edge_name }}"
+  register: edge
+
+- name: nsx compute cluster id
+  shell: python "{{ nsx_script_path }}" "{{ compt_name }}"
+  register: compt
+
+- name: nsx data store id
+  shell: python "{{ nsx_script_path }}" "{{ data_store }}"
+  register: data
+
+- name: nsx network id for mgmt network
+  shell: python "{{ nsx_script_path }}" "{{ mgmt_net_id }}"
+  register: m_net
+
+- name: nsx network id for mgmt network
+  shell: python "{{ nsx_script_path }}" "{{ main_vds }}"
+  register: dvs_net
+
+- name: create custom facts 
+  set_fact:
+    mgmt_id: "{{ mgmt.stdout }}"
+    edge_id: "{{ edge.stdout }}"
+    compt_id: "{{ compt.stdout }}"
+    ds_id: "{{ data.stdout }}"
+    mgnet_id: "{{ m_net.stdout }}"
+    maindvs_id: "{{ dvs_net.stdout }}"

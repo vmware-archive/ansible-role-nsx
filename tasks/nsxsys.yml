@@ -1,0 +1,31 @@
+---
+- name: sys Setup xml
+  command: cp  "{{ sys_xml }}" "{{ sys_tmp }}"
+  when: vcc_auth_status == "{{ success_status }}"
+
+- name: nsxsys create xml
+  xml: 
+    file: "{{ sys_tmp }}"
+    xpath: /syslogserver
+    add_children:
+          - syslogServer: "{{ nsx_sys }}"
+          - port: "{{ nsx_sys_port }}"
+          - protocol: "{{ nsx_sys_proto }}"
+
+- name: syslogserver put request
+  uri:
+    url: "{{ nsx_app_api }}"
+    method: PUT
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file','/tmp/files/nsxsys.xml') }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+  register: syslogserveroutput 
+
+- name: sys Set new fact 
+  set_fact:
+    sys_status: "{{ syslogserveroutput.status }}"
+
+- name: remove tmp file
+  file: path="{{ sys_tmp }}" state=absent

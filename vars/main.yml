@@ -1,0 +1,133 @@
+---
+nsx_user: 'admin'
+nsx_password: 'VMware1!'
+nsx_host: 192.168.110.42
+nsx_header: 'application/xml'
+nsx_api: "https://{{ nsx_host }}/api/2.0"
+nsx_app_api: "https://{{ nsx_host }}/api/1.0/appliance-management/system/syslogserver"
+nsx_services_api: "{{ nsx_api }}/services"
+nsx_vdn_api: "{{ nsx_api }}/vdn"
+nsx_controller: "{{ nsx_vdn_api }}/controller"
+nsx_jobstatus: "{{ nsx_controller }}/progress/"
+test_jobid: 'jobdata-5942'
+nsx_inst_virt: "{{ nsx_api }}/nwfabric/configure"
+nsx_vccon: "{{ nsx_services_api }}/vcconfig"
+nsx_ippool: "{{ nsx_services_api }}/ipam/pools/scope/globalroot-0"
+nsx_seg: "{{ nsx_vdn_api }}/config/segments"
+nsx_scope: "{{ nsx_vdn_api }}/scopes"
+####
+nsx_sys: '192.168.110.79'
+nsx_sys_port: '514'
+nsx_sys_proto: 'UDP'
+level: 'INFO'
+###
+####
+vctr_host: 192.168.110.22
+vuser: 'root'
+vpass: 'VMware1!'
+vport: '443'
+####
+###
+nsx_root: '/etc/ansible/roles/nsx'
+nsx_tmp: '/tmp/files'
+nsx_files: '/etc/ansible/roles/nsx/files'
+nsx_script_path: "{{ nsx_files }}/get_ids_mod.py"
+###
+####
+vc_xml: "{{ nsx_files }}/vcinfo.xml"
+vc_tmp: "{{ nsx_tmp }}/vcinfo.xml"
+sys_xml: "{{ nsx_files }}/nsxsys.xml"
+sys_tmp: "{{ nsx_tmp }}/nsxsys.xml"
+instv_xml: "{{ nsx_files }}/inst_virt.xml"
+instv_tmpa: "{{ nsx_tmp }}/inst_virta.xml"
+instv_tmpb: "{{ nsx_tmp }}/inst_virtb.xml"
+instv_tmpc: "{{ nsx_tmp }}/inst_virtc.xml"
+seg_xml: "{{ nsx_files }}/segid.xml"
+seg_tmp: "{{ nsx_tmp }}/segid.xml"
+vxlanb_xml: "{{ nsx_files }}/vxlan.xml"
+vxlanb_tmp: "{{ nsx_tmp }}/vxlan.xml"
+vxlanc_xml: "{{ nsx_files }}/vxlanc.xml"
+vxlanc_tmp: "{{ nsx_tmp }}/vxlanc.xml"
+vdnscope_xml: "{{ nsx_files }}/vdnscopes.xml"
+vdnscope_tmp: "{{ nsx_tmp }}/vdnscopes.xml"
+###
+contrl_xml: "{{ nsx_files }}/contrl_spec.xml"
+contrl_tmp: "{{ nsx_tmp }}/contrl_spec.xml"
+contrl_st_tmpa: "{{ nsx_tmp }}/deploy_status.xml"
+contrl_fail: 'FAILED TO CREATE CONTROLLER'
+contrl_status: '201'
+contrl_cmd: "{{ nsx_files }}/grabit.sh"
+contrl_py: "{{ nsx_files }}/get_status.py"
+contrl_include: "{{ nsx_root }}/tasks/contrl_deploy_status.yml"
+seg_fail: 'FAILED TO CREATE SEGEMENT ID'
+vxlan_fail: 'FAILED TO CONFIGURE VXLAN'
+vdn_fail: 'FAILED TO CREATE SCOPE'
+###
+####
+success_status: '200'
+created_status: '201'
+###
+mgmt_name: 'Management Cluster'
+edge_name: 'Edge Cluster'
+compt_name: 'Compute Cluster'
+data_store: 'ds-site-a-nfs01'
+mgmt_net_id: 'Compute_Edge_VDS - Mgmt'
+main_vds: 'Compute_Edge_VDS'
+###
+ansible_root: '/etc/ansible/roles/nsx/files'
+controller_name: 'controller-44'
+cntrl_ippool: 'ipaddresspool-1'
+cntrl_pass: 'VMware1!VMware1!'
+cntrl_deply: 'medium'
+segment_id:
+ id: '3'
+ name: 'segment_id_alpha'
+ desc: 'segment_id_alpha'
+ begin: '5000'
+ end: '5900'
+###
+vxlan:
+ featureId: 'com.vmware.vshield.vsm.vxlan'
+ configspeca: 'clusterMappingSpec'
+ vlid: '0'
+ vmcnt: '1'
+ ippoolid: 'ipaddresspool-3' 
+ mtu: '1600'
+ team: 'FAILOVER_ORDER'
+ vdscon: 'vdsContext'
+vxlanb:
+ featureId: 'com.vmware.vshield.vsm.vxlan'
+ configspeca: 'clusterMappingSpec'
+ vlid: '0'
+ vmcnt: '1'
+ ippoolid: 'ipaddresspool-2'
+ mtu: '1600'
+ team: 'FAILOVER_ORDER'
+ vdscon: 'vdsContext'
+vdnscope:
+ name: 'Scope-A'
+ cast: 'UNICAST_MODE'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

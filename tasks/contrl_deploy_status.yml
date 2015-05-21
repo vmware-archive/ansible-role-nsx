@@ -1,0 +1,30 @@
+---
+- name: check controller status with jobid to get status
+  uri:
+    url: "{{ nsx_jobstatus }}{{ cntrl.content }}"
+    method: GET
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    return_content: yes
+  register: deploy_status
+
+- name: copy content to file  
+  copy: content="{{ deploy_status.content }}" dest="{{ contrl_st_tmpa }}"
+  register: copy_content
+
+- name: get status
+  shell: python "{{ contrl_py }}" "{{ contrl_st_tmpa }}"
+  register: cmd_some_stat
+
+- name: create fact for job status 
+  set_fact:
+    o_cmd_stat: "{{ cmd_some_stat.stdout }}"
+
+- name: fail when o_cmd_stat.stdout is failure
+  fail: msg="{{ contrl_fail }}"
+  when: o_cmd_stat == 'Failure'
+
+- name: remove tmp file 
+  file: path="{{ contrl_st_tmpa }}" state=absent
