@@ -91,7 +91,7 @@ vxlan:
  configspeca: 'clusterMappingSpec'
  vlid: '0'
  vmcnt: '1'
- ippoolid: 'ipaddresspool-3' 
+ ippoolid: 'ipaddresspool-3'
  mtu: '1600'
  team: 'FAILOVER_ORDER'
  vdscon: 'vdsContext'

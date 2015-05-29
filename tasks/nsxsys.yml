@@ -4,7 +4,7 @@
   when: vcc_auth_status == "{{ success_status }}"
 
 - name: nsxsys create xml
-  xml: 
+  xml:
     file: "{{ sys_tmp }}"
     xpath: /syslogserver
     add_children:
@@ -21,9 +21,9 @@
     body: "{{ lookup('file','/tmp/files/nsxsys.xml') }}"
     force_basic_auth: yes
     HEADER_Content-Type: "{{ nsx_header }}"
-  register: syslogserveroutput 
+  register: syslogserveroutput
 
-- name: sys Set new fact 
+- name: sys Set new fact
   set_fact:
     sys_status: "{{ syslogserveroutput.status }}"
 

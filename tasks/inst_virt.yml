@@ -4,12 +4,12 @@
   when: sys_status == "{{ success_status }}"
 
 - name: add values to inst_virt a
-  xml: 
-    file: "{{ instv_tmpa }}" 
+  xml:
+    file: "{{ instv_tmpa }}"
     xpath: /nwFabricFeatureConfig/resourceConfig
     value: "{{ mgmt_id }}"
 
-- name: inst_virt put request a 
+- name: inst_virt put request a
   uri:
     url: "{{ nsx_inst_virt }}"
     method: POST
@@ -20,7 +20,7 @@
     HEADER_Content-Type: "{{ nsx_header }}"
   register: inst_virtoutputa
 
-- name: inst_virt Set new fact 
+- name: inst_virt Set new fact
   set_fact:
     inst_a_virt_status: "{{ inst_virtoutputa.status }}"
 
@@ -29,12 +29,12 @@
   when: inst_a_virt_status == "{{ success_status }}"
 
 - name: add values to inst_virt b
-  xml: 
+  xml:
     file: "{{ instv_tmpb }}"
     xpath: /nwFabricFeatureConfig/resourceConfig
     value: "{{ edge_id }}"
 
-- name: inst_virt put request b 
+- name: inst_virt put request b
   uri:
     url: "{{ nsx_inst_virt }}"
     method: POST
@@ -45,7 +45,7 @@
     HEADER_Content-Type: "{{ nsx_header }}"
   register: inst_virtoutputb
 
-- name: inst_virt Set new fact 
+- name: inst_virt Set new fact
   set_fact:
     inst_b_virt_status: "{{ inst_virtoutputb.status }}"
 
@@ -54,8 +54,8 @@
   when: inst_b_virt_status == "{{ success_status }}"
 
 - name: add values to inst_virt c
-  xml: 
-    file: "{{ instv_tmpc }}" 
+  xml:
+    file: "{{ instv_tmpc }}"
     xpath: /nwFabricFeatureConfig/resourceConfig
     value: "{{ compt_id }}"
 
@@ -70,7 +70,7 @@
     HEADER_Content-Type: "{{ nsx_header }}"
   register: inst_virtoutputc
 
-- name: inst_virt Set new fact 
+- name: inst_virt Set new fact
   set_fact:
     inst_c_virt_status: "{{ inst_virtoutputc.status }}"
 

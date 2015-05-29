@@ -1,5 +1,5 @@
 ---
-- name: Prep 
+- name: Prep
   wait_for: timeout=5
 
 - name: vxlan edge xml
@@ -11,15 +11,15 @@
     xpath: /nwFabricFeatureConfig
     add_children:
            - featureId: "{{ vxlanb.featureId }}"
-           - resourceConfig: 
+           - resourceConfig:
 
 - name: vxlan adding 1st subchildren to resourceConfig
-  xml: 
+  xml:
     file: "{{ vxlanc_tmp }}"
     xpath: /nwFabricFeatureConfig/resourceConfig
-    add_children: 
+    add_children:
            - resourceId: "{{ edge_id }}"
-           - configSpec: 
+           - configSpec:
                class: "{{ vxlanb.configspeca }}"
 
 - name: vxlan adding 1st sub-sub-children to configspec
@@ -27,7 +27,7 @@
     file: "{{ vxlanc_tmp }}"
     xpath: /nwFabricFeatureConfig/resourceConfig/configSpec
     add_children:
-           - switch: 
+           - switch:
            - vlanId: "{{ vxlanb.vlid }}"
            - vmknicCount: "{{ vxlanb.vmcnt }}"
            - ipPoolId: "{{ vxlanb.ippoolid }}"
@@ -46,11 +46,11 @@
     add_children:
            - resourceConfig:
 
-- name: vxlan adding 2nd subchildren to resourceConfig 
-  xml: 
+- name: vxlan adding 2nd subchildren to resourceConfig
+  xml:
     file: "{{ vxlanc_tmp }}"
     xpath: /nwFabricFeatureConfig/resourceConfig
-    add_children: 
+    add_children:
            - resourceId: "{{ maindvs_id }}"
            - configSpec:
                class: "{{ vxlanb.vdscon }}"
@@ -60,7 +60,7 @@
     file: "{{ vxlanc_tmp }}"
     xpath: /nwFabricFeatureConfig/resourceConfig/configSpec
     add_children:
-           - switch: 
+           - switch:
            - mtu: "{{ vxlanb.mtu }}"
            - teaming: "{{ vxlanb.team }}"
 

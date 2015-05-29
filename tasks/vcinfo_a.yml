@@ -3,7 +3,7 @@
   command: cp "{{ vc_xml }}" "{{ vc_tmp }}"
 
 - name: vcinfo create xml
-  xml: 
+  xml:
     file: "{{ vc_tmp }}"
     xpath: /vcInfo
     add_children:
@@ -22,7 +22,7 @@
     HEADER_Content-Type: "{{ nsx_header }}"
   register: vcinfooutput
 
-- name: vcinfo Set new fact 
+- name: vcinfo Set new fact
   set_fact:
     vcc_auth_status: "{{ vcinfooutput.status }}"
 

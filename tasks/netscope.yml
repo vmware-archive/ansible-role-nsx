@@ -7,7 +7,7 @@
     file: /tmp/netscop.xml
     xpath: /<vdnScope>
     add_children:
-           - name: 
+           - name:
            - clusters:
            - controlPlaneMode:
 
@@ -18,7 +18,7 @@
   xml: file=/tmp/netscop.xml xpath=/vdnScope/controlPlaneMode value='UNICAST_MODE'
 
 - name: add 2nd child
-  xml: 
+  xml:
     file: /tmp/netscop.xml
     xpath: /vdnScope/clusters
     add_children:
@@ -32,7 +32,7 @@
            - cluster:
 
 - name: add 4th child
-  xml: 
+  xml:
     file: /tmp/netscop.xml
     xpath: /vdnScope/clusters/cluster/cluster
     add_children:
@@ -46,22 +46,8 @@
            - cluster:
 
 - name: add 4th child
-  xml: 
+  xml:
     file: /tmp/netscop.xml
     xpath: /vdnScope/clusters/cluster/cluster
     add_children:
            - objectId: 'domain-222222'
-
-
-
-
-
-
-
-
-
-
-
-
-
-

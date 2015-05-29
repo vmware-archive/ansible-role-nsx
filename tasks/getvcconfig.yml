@@ -17,4 +17,3 @@
   xml:
     xmlstring: "{{ vccout.content }}"
     xpath: /vcInfo
-    

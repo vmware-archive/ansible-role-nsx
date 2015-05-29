@@ -10,7 +10,7 @@
     return_content: yes
   register: deploy_status
 
-- name: copy content to file  
+- name: copy content to file
   copy: content="{{ deploy_status.content }}" dest="{{ contrl_st_tmpa }}"
   register: copy_content
 
@@ -18,7 +18,7 @@
   shell: python "{{ contrl_py }}" "{{ contrl_st_tmpa }}"
   register: cmd_some_stat
 
-- name: create fact for job status 
+- name: create fact for job status
   set_fact:
     o_cmd_stat: "{{ cmd_some_stat.stdout }}"
 
@@ -26,5 +26,5 @@
   fail: msg="{{ contrl_fail }}"
   when: o_cmd_stat == 'Failure'
 
-- name: remove tmp file 
+- name: remove tmp file
   file: path="{{ contrl_st_tmpa }}" state=absent

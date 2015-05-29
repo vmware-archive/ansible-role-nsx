@@ -11,21 +11,21 @@
     xpath: /vdnScope
     add_children:
            - name: "{{ vdnscope.name }}"
-           - clusters: 
+           - clusters:
 
 - name: scope 1st child elements xml
   xml:
     file: "{{ vdnscope_tmp }}"
     xpath: /vdnScope/clusters
     add_children:
-           - cluster: 
+           - cluster:
 
 - name: scope 2st child elements xml
   xml:
     file: "{{ vdnscope_tmp }}"
     xpath: /vdnScope/clusters/cluster
     add_children:
-           - cluster:          
+           - cluster:
 
 - name: scope 3st child elements xml
   xml:
@@ -39,14 +39,14 @@
     file: "{{ vdnscope_tmp }}"
     xpath: /vdnScope/clusters
     add_children:
-           - cluster: 
+           - cluster:
 
 - name: scope 2st child elements xml
   xml:
     file: "{{ vdnscope_tmp }}"
     xpath: /vdnScope/clusters/cluster
     add_children:
-           - cluster:          
+           - cluster:
 
 - name: scope 2st child elements xml
   xml:

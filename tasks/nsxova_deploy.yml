@@ -1,11 +1,11 @@
 ---
-- name: deploy NSX OVA 
-  shell: ovftool 
+- name: deploy NSX OVA
+  shell: ovftool
               --name="{{ nsx_name }}"
-              --acceptAllEulas 
-              --allowExtraConfig 
+              --acceptAllEulas
+              --allowExtraConfig
               --noSSLVerify
-              --diskMode=thin 
+              --diskMode=thin
               --datastore="{{ nsx_datastore }}"
               --ipAllocationPolicy="{{ ipallocationpolicy }}"
               --ipProtocol="{{ ipprotocol }}"

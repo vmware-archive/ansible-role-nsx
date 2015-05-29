@@ -1,14 +1,13 @@
 ---
-- name: controller syslog 
+- name: controller syslog
   command: cp /etc/ansible/roles/nsx/files/cntrl_sys.xml /tmp/cntrl_sys.xml
 
 - name: add elements to xml
-  xml: 
+  xml:
     file: /tmp/cntrl_sys.xml
     xpath: /controllerSyslogServer
-    add_children: 
+    add_children:
            - syslogServer: "{{ nsx_sys }}"
            - port: "{{ nsx_sys_port }}"
            - protocol: "{{ nsx_sys_proto }}"
            - level: "{{ level }}"
-

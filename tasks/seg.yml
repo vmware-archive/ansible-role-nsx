@@ -1,5 +1,5 @@
 ---
-- name: Prep 
+- name: Prep
   wait_for: timeout=5
 
 - name: segment id
@@ -7,10 +7,10 @@
   when: o_cmd_stat == 'Success'
 
 - name: xml for segid
-  xml: 
+  xml:
     file: "{{ seg_tmp }}"
     xpath: /segmentRange
-    add_children: 
+    add_children:
            - id: "{{ segment_id.id }}"
            - name: "{{ segment_id.name }}"
            - desc: "{{ segment_id.desc }}"
@@ -29,7 +29,7 @@
   ignore_errors: yes
   register: segid_msg
 
-- name: segid fact 
+- name: segid fact
   set_fact:
     segid_stat: "{{ segid_msg.status }}"
 
@@ -39,4 +39,3 @@
 
 - name: remove file
   file: path="{{ seg_tmp }}" state=absent
-
