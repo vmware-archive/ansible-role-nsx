@@ -1,0 +1,23 @@
+---
+- name: deploy NSX OVA 
+  shell: ovftool 
+              --name="{{ nsx_name }}"
+              --acceptAllEulas 
+              --allowExtraConfig 
+              --noSSLVerify
+              --diskMode=thin 
+              --datastore="{{ nsx_datastore }}"
+              --ipAllocationPolicy="{{ ipallocationpolicy }}"
+              --ipProtocol="{{ ipprotocol }}"
+              --prop:vsm_cli_passwd_0="{{ cli_pass }}"
+              --prop:vsm_cli_en_passwd_0="{{ cli_pass }}"
+              --prop:vsm_isSSHEnabled=True
+              --prop:vsm_ntp_0="{{ nsx_ntp }}"
+              "{{ nsx_ova }}"
+              vi://{{ vcenter_user | urlencode }}:'{{ vcenter_password | urlencode }}'@'{{ vcenter_ip }}'/'{{ nsx_datacenter }}'/host/'{{ nsx_cluster }}'/
+  args:
+    chdir: "{{ nsx_dir }}"
+  register: nsxmanager
+
+- name: debug
+  debug: var=nsxmanager
