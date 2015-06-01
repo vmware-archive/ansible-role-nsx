@@ -13,8 +13,8 @@
               --prop:vsm_cli_en_passwd_0="{{ cli_pass }}"
               --prop:vsm_isSSHEnabled=True
               --prop:vsm_ntp_0="{{ nsx_ntp }}"
-              "{{ nsx_ova }}"
-              vi://{{ vcenter_user | urlencode }}:'{{ vcenter_password | urlencode }}'@'{{ vcenter_ip }}'/'{{ nsx_datacenter }}'/host/'{{ nsx_cluster }}'/
+              "{{ nsx_ova_https }}"
+              vi://{{ vcenter_user | urlencode }}:'{{ vcenter_password | urlencode }}'@'{{ vcenter_host }}'/'{{ nsx_datacenter }}'/host/'{{ nsx_cluster }}'/
   args:
     chdir: "{{ nsx_dir }}"
   register: nsxmanager
