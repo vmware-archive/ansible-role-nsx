@@ -1,4 +1,17 @@
 ---
+#- name: Check nsx_dir exists if not create it
+#  stat: path="{{ nsx_dir }}"
+#  register: n_dir
+#  when: from_http
+  
+#- name: debug directory test
+#  debug: msg="NSX Path exists"
+#  when: n_dir.stat.isdir is defined and n_dir.stat.isdir
+
+#- name: create temp dir for local storage ova
+#  file: path="{{ nxs_dir }}" state=directory mode=0755
+#  when: n_dir.stat.isdir != True
+
 - name: deploy NSX OVA
   shell: ovftool
               --name="{{ nsx_name }}"
@@ -7,14 +20,15 @@
               --noSSLVerify
               --diskMode=thin
               --datastore="{{ nsx_datastore }}"
+              --network={{ vds_name }}
               --ipAllocationPolicy="{{ ipallocationpolicy }}"
               --ipProtocol="{{ ipprotocol }}"
               --prop:vsm_cli_passwd_0="{{ cli_pass }}"
               --prop:vsm_cli_en_passwd_0="{{ cli_pass }}"
               --prop:vsm_isSSHEnabled=True
-              --prop:vsm_ntp_0="{{ nsx_ntp }}"
-              "{{ nsx_ova_https }}"
-              vi://{{ vcenter_user | urlencode }}:'{{ vcenter_password | urlencode }}'@'{{ vcenter_host }}'/'{{ nsx_datacenter }}'/host/'{{ nsx_cluster }}'/
+              --prop:vsm_ntp_0="{{ ntp_svr }}"
+              "{{ nsx_ova_http }}"
+              vi://{{ vcenter_user | urlencode }}:'{{ vcenter_password | urlencode }}'@'{{ vcenter_host }}'/'{{ datacenter_name }}'/host/'{{ vio_cluster_mgmt }}'/
   args:
     chdir: "{{ nsx_dir }}"
   register: nsxmanager
