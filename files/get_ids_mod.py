@@ -13,16 +13,8 @@ from sys import argv
 
 script, input_name = argv
 
-'''
-# testing locally
 vuser = 'administrator@vsphere.local'
-vcsvr = '192.168.1.99'
-passwd = 'VMware1!'
-vport = 443
-'''
-
-vuser = 'administrator@vsphere.local'
-vcsvr = '192.168.110.22'
+vcsvr = '192.168.110.20'
 passwd = 'VMware1!'
 vport = 443
 
@@ -36,7 +28,7 @@ class Getvcenterids(object):
             self.SI = SmartConnect(host=vhost, user=user, pwd=password, port=port)
         except:
             creds = self.vhost + " " + user + " " + password
-            self.module.fail_json(msg='Could not connect to host %s' % creds)
+            print creds
         return self.SI
 
     def get_names(self, top_path, name_list):
