@@ -1,7 +1,7 @@
 ---
-nsx_user: 'admin'
-nsx_password: 'VMware1!'
-nsx_host: 192.168.110.42
+nsx_user: {{ nsx_user }}
+nsx_password: {{ nsx_password }}
+nsx_host: {{ nsx_host }}
 nsx_header: 'application/xml'
 nsx_api: "https://{{ nsx_host }}/api/2.0"
 nsx_app_api: "https://{{ nsx_host }}/api/1.0/appliance-management/system/syslogserver"
@@ -9,28 +9,27 @@ nsx_services_api: "{{ nsx_api }}/services"
 nsx_vdn_api: "{{ nsx_api }}/vdn"
 nsx_controller: "{{ nsx_vdn_api }}/controller"
 nsx_jobstatus: "{{ nsx_controller }}/progress/"
-test_jobid: 'jobdata-5942'
 nsx_inst_virt: "{{ nsx_api }}/nwfabric/configure"
 nsx_vccon: "{{ nsx_services_api }}/vcconfig"
 nsx_ippool: "{{ nsx_services_api }}/ipam/pools/scope/globalroot-0"
 nsx_seg: "{{ nsx_vdn_api }}/config/segments"
 nsx_scope: "{{ nsx_vdn_api }}/scopes"
 ####
-nsx_sys: '192.168.110.79'
-nsx_sys_port: '514'
-nsx_sys_proto: 'UDP'
-level: 'INFO'
+nsx_sys: {{ nsx_sys }}
+nsx_sys_port: {{ nsx_sys_port }}
+nsx_sys_proto: {{ nsx_sys_proto }}
+level: {{ level }}
 ###
 ####
-vctr_host: 192.168.110.22
-vuser: 'root'
-vpass: 'VMware1!'
-vport: '443'
+vctr_host: {{ vcenter_host }}
+vuser: {{ vcenter_user }}
+vpass: {{ vcenter_password }}
+vport: {{ vcenter_port }}
 ####
 ###
-nsx_root: '/etc/ansible/roles/nsx'
+nsx_root: '/opt/supervio-ansible/roles/nsx'
 nsx_tmp: '/tmp/files'
-nsx_files: '/etc/ansible/roles/nsx/files'
+nsx_files: '/opt/supervio-ansible/roles/nsx/files'
 nsx_script_path: "{{ nsx_files }}/get_ids_mod.py"
 ###
 ####
@@ -74,17 +73,17 @@ data_store: 'ds-site-a-nfs01'
 mgmt_net_id: 'Compute_Edge_VDS - Mgmt'
 main_vds: 'Compute_Edge_VDS'
 ###
-ansible_root: '/etc/ansible/roles/nsx/files'
-controller_name: 'controller-44'
+ansible_root: '/opt/supervio-ansible/roles/nsx/files'
+controller_name: {{ controller_name }}
 cntrl_ippool: 'ipaddresspool-1'
-cntrl_pass: 'VMware1!VMware1!'
+cntrl_pass: {{ cntrl_pass }}
 cntrl_deply: 'medium'
 segment_id:
- id: '3'
- name: 'segment_id_alpha'
- desc: 'segment_id_alpha'
- begin: '5000'
- end: '5900'
+ id: {{ segment_id_num }}
+ name: {{ segment_name }}
+ desc: {{ segment_desc }}
+ begin: {{ segment_rang_start }}
+ end: {{ segment_rang_end }}
 ###
 vxlan:
  featureId: 'com.vmware.vshield.vsm.vxlan'
@@ -105,29 +104,5 @@ vxlanb:
  team: 'FAILOVER_ORDER'
  vdscon: 'vdsContext'
 vdnscope:
- name: 'Scope-A'
- cast: 'UNICAST_MODE'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ name: {{ vdn_scope_name }}
+ cast: {{ vdn_scope_cast }}
