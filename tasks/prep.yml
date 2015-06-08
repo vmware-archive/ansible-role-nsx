@@ -1,6 +1,6 @@
 ---
 - name: create tmp dir
-  file: path="{{ nsx_tmp }}" state=directory mode=0777 owner=vmware
+  file: path="{{ nsx_tmp }}" state=directory mode=0777 owner=vmware group=vmware
 
 - name: verify tmp dir created
   stat: path="{{ nsx_tmp }}"
