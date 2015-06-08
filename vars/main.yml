@@ -17,7 +17,7 @@ nsx_scope: "{{ nsx_vdn_api }}/scopes"
 ####
 nsx_sys: "{{ nsxsys }}"
 nsx_sys_port: "{{ nsxsys_port }}"
-nsx_sys_proto: "{{ nsxsys_proto }}"
+nsx_sys_proto: 'UDP'
 level: "{{ level }}"
 ###
 ####
