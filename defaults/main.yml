@@ -1,7 +1,7 @@
 ---
-nsx_user: {{ nsx_user }}
-nsx_password: {{ nsx_password }}
-nsx_host: {{ nsx_host }}
+nsx_user: "{{ nsx_user }}"
+nsx_password: "{{ nsx_password }}"
+nsx_host: "{{ nsx_host }}"
 nsx_header: 'application/xml'
 nsx_api: "https://{{ nsx_host }}/api/2.0"
 nsx_app_api: "https://{{ nsx_host }}/api/1.0/appliance-management/system/syslogserver"
@@ -15,16 +15,16 @@ nsx_ippool: "{{ nsx_services_api }}/ipam/pools/scope/globalroot-0"
 nsx_seg: "{{ nsx_vdn_api }}/config/segments"
 nsx_scope: "{{ nsx_vdn_api }}/scopes"
 ####
-nsx_sys: {{ nsx_sys }}
-nsx_sys_port: {{ nsx_sys_port }}
-nsx_sys_proto: {{ nsx_sys_proto }}
-level: {{ level }}
+nsx_sys: "{{ nsx_sys }}"
+nsx_sys_port: "{{ nsx_sys_port }}"
+nsx_sys_proto: "{{ nsx_sys_proto }}"
+level: "{{ level }}"
 ###
 ####
-vctr_host: {{ vcenter_host }}
-vuser: {{ vcenter_user }}
-vpass: {{ vcenter_password }}
-vport: {{ vcenter_port }}
+vctr_host: "{{ vcenter_host }}"
+vuser: "{{ vcenter_user }}"
+vpass: "{{ vcenter_password }}"
+vport: "{{ vcenter_port }}"
 ####
 ###
 nsx_root: '/opt/supervio-ansible/roles/nsx'
@@ -66,24 +66,24 @@ vdn_fail: 'FAILED TO CREATE SCOPE'
 success_status: '200'
 created_status: '201'
 ###
-mgmt_name: {{ mgmt_name }}
-edge_name: {{ edge_name }}
-compt_name: {{ compt_name }}
-nsx_data_store: {{ nsx_data_store }}
+mgmt_name: "{{ mgmt_name }}"
+edge_name: "{{ edge_name }}"
+compt_name: "{{ compt_name }}"
+nsx_data_store: "{{ nsx_data_store }}"
 mgmt_net_id: 'Compute_Edge_VDS - Mgmt'
 main_vds: 'Compute_Edge_VDS'
 ###
 ansible_root: '/opt/supervio-ansible/roles/nsx/files'
-controller_name: {{ controller_name }}
+controller_name: "{{ controller_name }}"
 cntrl_ippool: 'ipaddresspool-1'
-cntrl_pass: {{ cntrl_pass }}
+cntrl_pass: "{{ cntrl_pass }}"
 cntrl_deply: 'medium'
 segment_id:
- id: {{ segment_id_num }}
- name: {{ segment_name }}
- desc: {{ segment_desc }}
- begin: {{ segment_rang_start }}
- end: {{ segment_rang_end }}
+ id: "{{ segment_id_num }}"
+ name: "{{ segment_name }}"
+ desc: "{{ segment_desc }}"
+ begin: "{{ segment_rang_start }}"
+ end: "{{ segment_rang_end }}"
 ###
 vxlan:
  featureId: 'com.vmware.vshield.vsm.vxlan'
@@ -104,5 +104,5 @@ vxlanb:
  team: 'FAILOVER_ORDER'
  vdscon: 'vdsContext'
 vdnscope:
- name: {{ vdn_scope_name }}
- cast: {{ vdn_scope_cast }}
+ name: "{{ vdn_scope_name }}"
+ cast: "{{ vdn_scope_cast }}"
