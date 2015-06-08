@@ -70,8 +70,8 @@ mgmt_name: "{{ mgmtname }}"
 edge_name: "{{ edgename }}"
 compt_name: "{{ comptname }}"
 nsx_data_store: "{{ nsxdata_store }}"
-mgmt_net_id: 'Compute_Edge_VDS - Mgmt'
-main_vds: 'Compute_Edge_VDS'
+mgmt_net_id: 'VIO Management'
+main_vds: 'VIO External Network'
 ###
 ansible_root: '/opt/supervio-ansible/roles/nsx/files'
 controller_name: "{{ controllername }}"
