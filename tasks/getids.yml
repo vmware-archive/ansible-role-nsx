@@ -14,7 +14,7 @@
   register: compt
 
 - name: nsx data store id
-  shell: python "{{ nsx_script_path }}" "{{ data_store }}"
+  shell: python "{{ nsx_script_path }}" "{{ nsx_data_store }}"
   register: data
 
 - name: nsx network id for mgmt network

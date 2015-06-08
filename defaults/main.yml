@@ -66,10 +66,10 @@ vdn_fail: 'FAILED TO CREATE SCOPE'
 success_status: '200'
 created_status: '201'
 ###
-mgmt_name: 'Management Cluster'
-edge_name: 'Edge Cluster'
-compt_name: 'Compute Cluster'
-data_store: 'ds-site-a-nfs01'
+mgmt_name: {{ mgmt_name }}
+edge_name: {{ edge_name }}
+compt_name: {{ compt_name }}
+nsx_data_store: {{ nsx_data_store }}
 mgmt_net_id: 'Compute_Edge_VDS - Mgmt'
 main_vds: 'Compute_Edge_VDS'
 ###
