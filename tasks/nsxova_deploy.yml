@@ -1,19 +1,26 @@
 ---
-#- name: Check nsx_dir exists if not create it
-#  stat: path="{{ nsx_dir }}"
-#  register: n_dir
-#  when: from_http
-  
-#- name: debug directory test
-#  debug: msg="NSX Path exists"
-#  when: n_dir.stat.isdir is defined and n_dir.stat.isdir
+- name: Download OVFtool
+  get_url:
+    url: "{{ ovf_zip_url }}"
+    dest: "{{ tmp_dir }}"
 
-#- name: create temp dir for local storage ova
-#  file: path="{{ nxs_dir }}" state=directory mode=0755
-#  when: n_dir.stat.isdir != True
+- name: Unzip the OVFtool
+  unarchive: src="{{ tmp_dir }}/{{ ovf_zip }}" dest="{{ tmp_dir }}" copy=no
+
+- name: Confirm OVFtool
+  shell: /tmp/ovftool/ovftool "{{ nsx_ova_http }}"
+  register: ovftest
+
+- name: Set OVFtool Status
+  set_fact:
+    ovfstatus: "{{ ovftest.rc }}"
+
+- name: Fail if OVFtool not responding
+  fail: msg="OVFtool not able to reach ovf descriptor"
+  when: ovfstatus != "0"
 
 - name: deploy NSX OVA
-  shell: ovftool
+  shell: /tmp/ovftool/ovftool
               --name="{{ nsx_name }}"
               --acceptAllEulas
               --allowExtraConfig
@@ -21,17 +28,18 @@
               --diskMode=thin
               --datastore="{{ nsx_datastore }}"
               --network={{ vds_name }}
-              --ipAllocationPolicy="{{ ipallocationpolicy }}"
-              --ipProtocol="{{ ipprotocol }}"
+              --ipProtocol=IPv4
               --prop:vsm_cli_passwd_0="{{ cli_pass }}"
               --prop:vsm_cli_en_passwd_0="{{ cli_pass }}"
-              --prop:vsm_isSSHEnabled=True
+              --prop:vsm_hostname="{{ nsx_hostname }}"
+              --prop:vsm_ip_0="{{ nsx_ip }}"
+              --prop:vsm_netmask_0="{{ nsx_netmask }}"
+              --prop:vsm_gateway_0="{{ nsx_gateway }}"
+              --prop:vsm_dns1_0="{{ nsx_dns }}"
+              --prop:vsm_domain_0="{{ nsx_domain }}"
               --prop:vsm_ntp_0="{{ ntp_svr }}"
+              --prop:vsm_isSSHEnabled="{{ nsx_ssh_enabled }}"
               "{{ nsx_ova_http }}"
               vi://{{ vcenter_user | urlencode }}:'{{ vcenter_password | urlencode }}'@'{{ vcenter_host }}'/'{{ datacenter_name }}'/host/'{{ vio_cluster_mgmt }}'/
-  args:
-    chdir: "{{ nsx_dir }}"
   register: nsxmanager
-
-- name: debug
-  debug: var=nsxmanager
+  when: ovfstatus == "0"
