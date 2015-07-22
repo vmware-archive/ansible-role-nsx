@@ -1,14 +1,6 @@
 ---
-- name: Download OVFtool
-  get_url:
-    url: "{{ ovf_zip_url }}"
-    dest: "{{ tmp_dir }}"
-
-- name: Unzip the OVFtool
-  unarchive: src="{{ tmp_dir }}/{{ ovf_zip }}" dest="{{ tmp_dir }}" copy=no
-
 - name: Confirm OVFtool
-  shell: /tmp/ovftool/ovftool "{{ nsx_ova_http }}"
+  shell: "{{ ovftool }} {{ nsx_ova_http }}"
   register: ovftest
 
 - name: Set OVFtool Status
@@ -20,7 +12,7 @@
   when: ovfstatus != "0"
 
 - name: deploy NSX OVA
-  shell: /tmp/ovftool/ovftool
+  shell: "{{ ovftool }}"
               --name="{{ nsx_name }}"
               --acceptAllEulas
               --allowExtraConfig

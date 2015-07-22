@@ -2,8 +2,6 @@
 ##### nsx ova deploy vars
 tmp_dir: "/tmp"
 nsx_ova: "VMware-NSX-Manager-6.1.4-2691049.ova"
-ovf_zip: "VMware-ovftool-4.1.0-2710377-lin.x86_64.zip"
-ovf_zip_url: "http://supervio.corp.local/downloads/{{ ovf_zip }}"
 nsx_ova_http: "http://supervio.corp.local/downloads/{{ nsx_ova }}"
 ipprotocol: "IPv4"
 ### The below are variables from the answerfile ###

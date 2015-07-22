@@ -1,0 +1,3 @@
+---
+##### this is where the UI installs the ovftool this by default
+ovftool: /usr/local/bin/ovftool/ovftool
