@@ -1,30 +1,37 @@
 ---
-- name: vcinfo Setup xml
+- name: Prepare for Authenticate vCenter
   command: cp "{{ vc_xml }}" "{{ vc_tmp }}"
 
-- name: vcinfo create xml
+- name: Create xml for Authenticate vCenter
   xml:
     file: "{{ vc_tmp }}"
     xpath: /vcInfo
     add_children:
-          - ipAddress: "{{ vctr_host }}"
-          - userName: "{{ vuser }}"
-          - password: "{{ vpass }}"
+          - ipAddress: "{{ vcenter_host }}"
+          - userName: "{{ vcenter_user }}"
+          - password: "{{ vcenter_password }}"
+          - certificateThumbprint: "{{ vcert }}"
 
-- name: vcinfo put request
+- name: vCenter Authentication PUT request
   uri:
     url: "{{ nsx_vccon }}"
     method: PUT
     user: "{{ nsx_user }}"
     password: "{{ nsx_password }}"
-    body: "{{ lookup('file','/tmp/files/vcinfo.xml') }}"
+    body: "{{ lookup('file', item) }}"
     force_basic_auth: yes
     HEADER_Content-Type: "{{ nsx_header }}"
-  register: vcinfooutput
+    validate_certs: no
+    return_content: no
+  with_items:
+    - "{{ vc_tmp }}"
+  register: vcauth
 
-- name: vcinfo Set new fact
-  set_fact:
-    vcc_auth_status: "{{ vcinfooutput.status }}"
+- name: Fail when status not 200
+  fail:
+    msg: "Failed to Authenticate with vCenter"
+  when: item.status != 200
+  with_items: "{{ vcauth.results }}"
 
 - name: remove tmp file
   file: path="{{ vc_tmp }}" state=absent

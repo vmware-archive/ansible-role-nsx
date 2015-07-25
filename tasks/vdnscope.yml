@@ -1,7 +1,4 @@
 ---
-- name: Prep
-  wait_for: timeout=5
-
 - name: scope xml
   command: cp "{{ vdnscope_xml }}" "{{ vdnscope_tmp }}"
 
@@ -10,7 +7,7 @@
     file: "{{ vdnscope_tmp }}"
     xpath: /vdnScope
     add_children:
-           - name: "{{ vdnscope.name }}"
+           - name: "{{ vdnscope_name }}"
            - clusters:
 
 - name: scope 1st child elements xml
@@ -32,7 +29,7 @@
     file: "{{ vdnscope_tmp }}"
     xpath: /vdnScope/clusters/cluster/cluster
     add_children:
-           - objectId: "{{ edge_id }}"
+           - objectId: "{{ vio_cluster_edge_id }}"
 
 - name: scope 1st child elements xml
   xml:
@@ -53,14 +50,14 @@
     file: "{{ vdnscope_tmp }}"
     xpath: /vdnScope/clusters/cluster/cluster
     add_children:
-           - objectId: "{{ compt_id }}"
+           - objectId: "{{ vio_cluster_compute_id }}"
 
 - name: scope parent elements xml
   xml:
     file: "{{ vdnscope_tmp }}"
     xpath: /vdnScope
     add_children:
-           - controlPlaneMode: "{{ vdnscope.cast }}"
+           - controlPlaneMode: "{{ vdnscope_mode }}"
 
 - name: vdnscopes POST for Compt/Edge Cluster
   uri:
@@ -68,19 +65,20 @@
     method: POST
     user: "{{ nsx_user }}"
     password: "{{ nsx_password }}"
-    body: "{{ lookup('file','/tmp/files/vdnscopes.xml') }}"
+    body: "{{ lookup('file', item) }}"
     force_basic_auth: yes
     HEADER_Content-Type: "{{ nsx_header }}"
-  ignore_errors: yes
-  register: vdn_status
+    validate_certs: no
+    status_code: 201
+  with_items:
+    - "{{ vdnscope_tmp }}"
+  register: vdnscope_create
 
-- name: set fact for status
-  set_fact:
-    vdn_stat: "{{ vdn_status.status }}"
+- name: Fail when status not 201
+  fail:
+    msg: "Failed to create Transport zone {{ vdnscope_name }}"
+  when: item.status != 201
+  with_items: "{{ vdnscope_create.results }}"
 
-- name: failure message
-  fail: msg="{{ vdn_fail }}"
-  when: vdn_stat != "{{ created_status }}"
-
-- name: Status Code
-  debug: msg="{{ vdn_status.status }}"
+- name: remove file
+  file: path="{{ vdnscope_tmp }}" state=absent

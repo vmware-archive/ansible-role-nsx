@@ -1,0 +1,18 @@
+---
+- name: Resolve Virtualization Components for Clusters
+  uri:
+    url: "{{ nsx_resolve }}/{{ item }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    validate_certs: no
+    return_content: yes
+  with_items:
+    - "{{ vio_cluster_edge_id }}"
+    - "{{ vio_cluster_compute_id }}"
+  register: instvirt_resolve
+
+- name: Resolve status
+  debug: var=instvirt_resolve

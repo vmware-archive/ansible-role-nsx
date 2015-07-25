@@ -1,7 +1,0 @@
----
-- name: wait check for failure
-  wait_for: timeout=20
-  when: o_cmd_stat == 'Waiting'
-
-- include: "{{ contrl_include }}"
-

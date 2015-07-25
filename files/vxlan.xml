@@ -1,3 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <nwFabricFeatureConfig>
+    <featureId>com.vmware.vshield.vsm.vxlan</featureId>
+    <resourceConfig>
+        <resourceId></resourceId>
+        <configSpec class="clusterMappingSpec">
+            <switch><objectId></objectId></switch>
+            <vlanId></vlanId>          
+            <vmknicCount></vmknicCount>
+            <ipPoolId></ipPoolId>
+        </configSpec>
+    </resourceConfig>
+    <resourceConfig>
+        <resourceId></resourceId>
+        <configSpec class="vdsContext">
+            <switch><objectId></objectId></switch>
+            <mtu></mtu>
+            <teaming></teaming>
+        </configSpec>
+    </resourceConfig>
 </nwFabricFeatureConfig>

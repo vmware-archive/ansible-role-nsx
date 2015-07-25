@@ -1,21 +1,43 @@
 ---
+- name: Get Management Cluster Resource Group Object ID
+  ignore_errors: no
+  local_action:
+    module: get_cluster_resgroup
+    host: "{{ vcenter_host }}"
+    login: "{{ vcenter_user }}"
+    password: "{{ vcenter_password }}"
+    port: "{{ vcenter_port }}"
+    cluster: "{{ vio_cluster_mgmt }}"
+    resourcevarname: 'vio_cluster_mgmt_resgroup'
+  register: clusterpool
+
+- name: Get Controller Ip pool id
+  shell: awk -F = '/{{ item }}/ { print $2 }' "{{ ippoolids }}"
+  with_items:
+    - "{{ controller_ippool_name }}"
+  register: controllerippool_id
+
+- name: set fact for controller ip pool id
+  set_fact:
+    controller_ippool_id: "{{ item.stdout }}"
+  with_items: "{{ controllerippool_id.results }}"
+
 - name: contrl_spec Setup xml
-  command: cp "{{ contrl_xml }}" "{{ contrl_tmp }}"
-  #when: inst_c_virt_status == "{{ success_status }}"
+  command: cp "{{ controller_xml }}" "{{ controller_tmp }}"
 
 - name: add elements to xml
   xml:
-    file: "{{ contrl_tmp }}"
+    file: "{{ controller_tmp }}"
     xpath: /controllerSpec
     add_children:
-          - name: "{{ controller_name }}"
-          - description: "{{ controller_name }}"
-          - ipPoolId: "{{ cntrl_ippool }}"
-          - resourcePoolId: "{{ mgmt_id }}"
-          - datastoreId: "{{ ds_id }}"
-          - deployType: "{{ cntrl_deply }}"
-          - networkId: "{{ mgnet_id }}"
-          - password: "{{ cntrl_pass }}"
+          - name: "{{ controllername }}"
+          - description: "{{ controllername }}"
+          - ipPoolId: "{{ controller_ippool_id }}"
+          - resourcePoolId: "{{ vio_cluster_mgmt_resgroup }}"
+          - datastoreId: "{{ vio_ds_id }}"
+          - deployType: "{{ controller_deploy_size }}"
+          - networkId: "{{ vio_mgmtpg_id }}"
+          - password: "{{ controller_password }}"
 
 - name: Create the controller
   uri:
@@ -23,26 +45,39 @@
     method: POST
     user: "{{ nsx_user }}"
     password: "{{ nsx_password }}"
-    body: "{{ lookup('file','/tmp/files/contrl_spec.xml') }}"
+    body: "{{ lookup('file', item) }}"
     force_basic_auth: yes
     HEADER_Content-Type: "{{ nsx_header }}"
     return_content: yes
-  ignore_errors: yes
-  register: cntrl
+    status_code: 201
+    validate_certs: no
+  with_items:
+    - "{{ controller_tmp }}"
+  register: controller_create
 
-- name: create fact for status code
-  set_fact:
-    cntrl_status: "{{ cntrl.status }}"
+- name: Fail when status not 201
+  fail:
+    msg: "Failed to create controller {{ controller_name }}"
+  when: item.status != 201
+  with_items: "{{ controller_create.results }}"
 
-- name: Fail when staus not 201
-  fail: msg="{{ contrl_fail }}"
-  when: cntrl_status != "{{ contrl_status }}"
+- name: Set fact to jobid
+  set_fact: jobid="{{ item.content }}"
+  with_items: "{{ controller_create.results }}"
 
-- name: create fact for jobid
-  set_fact:
-    jobid: "{{ cntrl.content }}"
+- name: check controller status with jobid to get status
+  uri:
+    url: "{{ nsx_jobstatus }}{{ jobid }}"
+    method: GET
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    return_content: yes
+    validate_certs: no
+  register: jobstatus_id
 
-- name: remove file
-  file: path="{{ contrl_tmp }}" state=absent
-
-
+- name: remove tmp file
+  file: path="{{ item }}" state=absent
+  with_items:
+    - "{{ controller_tmp }}"

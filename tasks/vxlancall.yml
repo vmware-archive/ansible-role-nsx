@@ -1,0 +1,197 @@
+---
+- name: Get Edge Ip pool id
+  shell: awk -F = '/{{ item }}/ { print $2 }' "{{ ippoolids }}"
+  with_items:
+    - "{{ edgevtep_ippool_name }}"
+  register: edge_ippool
+
+- name: set fact for edge ip pool id
+  set_fact:
+    edge_id: "{{ item.stdout }}"
+  with_items: "{{ edge_ippool.results }}"
+
+- name: Get Compute Ip pool id
+  shell: awk -F = '/{{ item }}/ { print $2 }' "{{ ippoolids }}"
+  with_items:
+    - "{{ computevtep_ippool_name }}"
+  register: compute_ippool
+
+- name: set fact for compute ip pool id
+  set_fact:
+    compute_id: "{{ item.stdout }}"
+  with_items: "{{ compute_ippool.results }}"
+
+- name: VXLAN Create xml
+  command: cp "{{ vxlan_xml }}" "{{ vxlan_tmp }}"
+
+- name: vxlan parent elements xml
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig
+    add_children:
+           - featureId: "{{ vxlan.featureId }}"
+           - resourceConfig:
+
+- name: VXLAN Create xml
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig
+    add_children:
+           - resourceId: "{{ vio_cluster_compute_id }}"
+           - configSpec:
+               class: "{{ vxlan.configspec }}"
+
+- name: VXLAN Create xml
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec
+    add_children:
+           - switch:
+           - vlanId: "{{ vxlan_vlanid }}"
+           - vmknicCount: "{{ vxlan_vmnic }}"
+           - ipPoolId: "{{ compute_id }}"
+
+- name: vxlan adding 1st sub-sub-sub child to switch
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec/switch
+    add_children:
+           - objectId: "{{ vio_vds_id }}"
+
+- name: vxlan adding 2nd parent resourceConfig
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig
+    add_children:
+           - resourceConfig:
+
+- name: vxlan adding 2nd subchildren to resourceConfig
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig
+    add_children:
+           - resourceId: "{{ vio_vds_id }}"
+           - configSpec:
+               class: "{{ vxlan.vdscon }}"
+
+- name: vxlan adding 2nd sub-sub-children to configspec
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec
+    add_children:
+           - switch:
+           - mtu: "{{ vxlan_mtu }}"
+           - teaming: "{{ vxlan_teaming }}"
+
+- name: vxlan adding 2nd sub-sub-sub child to switch
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec/switch
+    add_children:
+           - objectId: "{{ vio_vds_id }}"
+
+- name: vxlan POST for Compt Cluster
+  uri:
+    url: "{{ nsx_inst_virt }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file', item) }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    validate_certs: no
+  with_items:
+    - "{{ vxlan_tmp }}"
+  register: vxlan_status
+
+- name: remove file
+  file: path="{{ vxlan_tmp }}" state=absent
+
+- name: VXLAN Create xml
+  command: cp "{{ vxlan_xml }}" "{{ vxlan_tmp }}"
+
+- name: vxlan parent elements xml
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig
+    add_children:
+           - featureId: "{{ vxlan.featureId }}"
+           - resourceConfig:
+
+- name: VXLAN Create xml
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig
+    add_children:
+           - resourceId: "{{ vio_cluster_edge_id }}"
+           - configSpec:
+               class: "{{ vxlan.configspec }}"
+
+- name: VXLAN Create xml
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec
+    add_children:
+           - switch:
+           - vlanId: "{{ vxlan_vlanid }}"
+           - vmknicCount: "{{ vxlan_vmnic }}"
+           - ipPoolId: "{{ edge_id }}"
+
+- name: vxlan adding 1st sub-sub-sub child to switch
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec/switch
+    add_children:
+           - objectId: "{{ vio_vds_id }}"
+
+- name: vxlan adding 2nd parent resourceConfig
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig
+    add_children:
+           - resourceConfig:
+
+- name: vxlan adding 2nd subchildren to resourceConfig
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig
+    add_children:
+           - resourceId: "{{ vio_vds_id }}"
+           - configSpec:
+               class: "{{ vxlan.vdscon }}"
+
+- name: vxlan adding 2nd sub-sub-children to configspec
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec
+    add_children:
+           - switch:
+           - mtu: "{{ vxlan_mtu }}"
+           - teaming: "{{ vxlan_teaming }}"
+
+- name: vxlan adding 2nd sub-sub-sub child to switch
+  xml:
+    file: "{{ vxlan_tmp }}"
+    xpath: /nwFabricFeatureConfig/resourceConfig/configSpec/switch
+    add_children:
+           - objectId: "{{ vio_vds_id }}"
+
+- name: VXLAN Configure Edge Cluster
+  uri:
+    url: "{{ nsx_inst_virt }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file', item) }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    validate_certs: no
+  with_items:
+    - "{{ vxlan_tmp }}"
+  register: vxlanedge_status
+
+- name: remove file
+  file: path="{{ vxlan_tmp }}" state=absent
+
+
+

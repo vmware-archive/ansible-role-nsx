@@ -1,0 +1,28 @@
+---
+- name: Get Edge Ip pool id
+  shell: awk -F = '/{{ item }}/ { print $2 }' "{{ ippoolids }}"
+  with_items:
+    - "{{ edgevtep_ippool_name }}"
+  register: edge_ippool
+
+- name: set fact for edge ip pool id
+  set_fact:
+    edge_id: "{{ item.stdout }}"
+  with_items: "{{ edge_ippool.results }}"
+
+- name: Get Compute Ip pool id
+  shell: awk -F = '/{{ item }}/ { print $2 }' "{{ ippoolids }}"
+  with_items:
+    - "{{ computevtep_ippool_name }}"
+  register: compute_ippool
+
+- name: set fact for compute ip pool id
+  set_fact:
+    compute_id: "{{ item.stdout }}"
+  with_items: "{{ compute_ippool.results }}"
+
+- name: create xml for request
+  template: src="{{ vxlan_xml }}" dest="{{ nsx_tmp }}/{{ item.clusterid }}_vxlan.xml"
+  with_items:
+    - { clusterid: "{{ vio_cluster_edge_id }}", mainvds: "{{ vio_vds_id }}", portgroup: "{{ vio_mgmtpg_id }}" , ippoolid: "{{ edge_id }}", vlanid: "{{ vxlan_vlanid }}", vmknic: "{{ vxlan_vmnic }}", teaming: "{{ vxlan_teaming }}" }
+    - { clusterid: "{{ vio_cluster_compute_id }}", mainvds: "{{ vio_vds_id }}", portgroup: "{{ vio_mgmtpg_id }}" , ippoolid: "{{ compute_id }}", vlanid: "{{ vxlan_vlanid }}", vmknic: "{{ vxlan_vmnic }}", teaming: "{{ vxlan_teaming }}" }

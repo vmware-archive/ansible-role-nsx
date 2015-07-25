@@ -1,8 +1,6 @@
 ---
 - name: depoloy NSX OVA
-  include: nsxova_deploy.yml
-  when: nsx_deploy
+  include: nsxova_deploy.yml tags=nsxdeploy
 
 - name: Configure NSX
-  include: nsx_configure.yml
-  when: nsx_config
+  include: nsx_configure.yml tags=nsxconfig

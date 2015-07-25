@@ -1,0 +1,192 @@
+---
+- name: Create Controller IP Pool
+  command: cp "{{ ippool_xml }}" "{{ ippool_tmp }}"
+
+- name: Create Controller IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool
+    add_children:
+          - name: "{{ controller_ippool_name }}"
+          - prefixLength: "{{ controller_ippool_prefix }}"
+          - gateway: "{{ controller_ippool_gw }}"
+          - ipRanges:
+
+- name: Create Controller IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool/ipRanges
+    add_children:
+          - ipRangeDto:
+
+- name: Create Controller IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool/ipRanges/ipRangeDto
+    add_children:
+          - startAddress: "{{ controller_ippool_range_start }}"
+          - endAddress: "{{ controller_ippool_range_end }}"
+
+- name: Create Controller IP Pool POST
+  uri:
+    url: "{{ nsx_ippool }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file', item) }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    return_content: yes
+    validate_certs: no
+    status_code: 201
+  with_items:
+    - "{{ ippool_tmp }}"
+  register: controllerippool_request
+
+- name: Fail when status not 201
+  fail:
+    msg: "Failed to Crate Controller IP Pool Configuration"
+  when: item.status != 201
+  with_items: "{{ controllerippool_request.results }}"
+
+- name: Get the return content for Controller ippool object id
+  set_fact:
+    controller_ippool_id: "{{ item.content }}"
+  with_items: "{{ controllerippool_request.results }}"
+
+- name: remove tmp file
+  file: path="{{ ippool_tmp }}" state=absent
+
+- name: Create Edge VTEP IP Pool
+  command: cp "{{ ippool_xml }}" "{{ ippool_tmp }}"
+
+- name: Create Edge VTEP IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool
+    add_children:
+          - name: "{{ edgevtep_ippool_name }}"
+          - prefixLength: "{{ edgevtep_ippool_prefix }}"
+          - gateway: "{{ edgevtep_ippool_gw }}"
+          - ipRanges:
+
+- name: Create Edge VTEP IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool/ipRanges
+    add_children:
+          - ipRangeDto:
+
+- name: Create Edge VTEP IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool/ipRanges/ipRangeDto
+    add_children:
+          - startAddress: "{{ edgevtep_ippool_range_start }}"
+          - endAddress: "{{ edgevtep_ippool_range_end }}"
+
+- name: Create Edge IP Pool POST
+  uri:
+    url: "{{ nsx_ippool }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file', item) }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    return_content: yes
+    validate_certs: no
+    status_code: 201
+  with_items:
+    - "{{ ippool_tmp }}"
+  register: edgevtep_request
+
+- name: Fail when status not 201
+  fail:
+    msg: "Failed to create Edge VTEP IP Pool"
+  when: item.status != 201
+  with_items: "{{ edgevtep_request.results }}"
+
+- name: Get the return content for Edge ippool object id
+  set_fact:
+    edge_ippool_id: "{{ item.content }}"
+  with_items: "{{ edgevtep_request.results }}"
+
+- name: remove tmp file
+  file: path="{{ ippool_tmp }}" state=absent
+
+- name: Create Compute VTEP IP Pool
+  command: cp "{{ ippool_xml }}" "{{ ippool_tmp }}"
+
+- name: Create Compute VTEP IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool
+    add_children:
+          - name: "{{ computevtep_ippool_name }}"
+          - prefixLength: "{{ computevtep_ippool_prefix }}"
+          - gateway: "{{ computevtep_ippool_gw }}"
+          - ipRanges:
+
+- name: Create Compute VTEP IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool/ipRanges
+    add_children:
+          - ipRangeDto:
+
+- name: Create Compute VTEP IP Pool xml
+  xml:
+    file: "{{ ippool_tmp }}"
+    xpath: /ipamAddressPool/ipRanges/ipRangeDto
+    add_children:
+          - startAddress: "{{ computevtep_ippool_range_start }}"
+          - endAddress: "{{ computevtep_ippool_range_end }}"
+
+- name: Create Compute IP Pool POST
+  uri:
+    url: "{{ nsx_ippool }}"
+    method: POST
+    user: "{{ nsx_user }}"
+    password: "{{ nsx_password }}"
+    body: "{{ lookup('file', item) }}"
+    force_basic_auth: yes
+    HEADER_Content-Type: "{{ nsx_header }}"
+    return_content: yes
+    validate_certs: no
+    status_code: 201
+  with_items:
+    - "{{ ippool_tmp }}"
+  register: computevtep_request
+
+- name: Fail when status not 201
+  fail:
+    msg: "Failed to Crate Compute VTEP IP Pool Configuration"
+  when: item.status != 201
+  with_items: "{{ computevtep_request.results }}"
+
+- name: Get the return content for Compute ippool object id
+  set_fact:
+    compute_ippool_id: "{{ item.content }}"
+  with_items: "{{ computevtep_request.results }}"
+
+- name: remove tmp file
+  file: path="{{ ippool_tmp }}" state=absent
+
+- name: Output IP pool ids
+  debug: msg="{{ item }}"
+  with_items:
+    - "{{ controller_ippool_id }}"
+    - "{{ edge_ippool_id }}"
+    - "{{ compute_ippool_id }}"
+
+- name: create tmp file
+  file: path="{{ ippoolids }}" state=touch owner=vmware group=vmware
+
+- name: Save IP pool ids
+  shell: echo "{{ item.ippool_name }}={{ item.ippoolid }}" >> "{{ ippoolids }}"
+  with_items:
+    - { ippool_name: "{{ controller_ippool_name }}", ippoolid: "{{ controller_ippool_id }}" }
+    - { ippool_name: "{{ edgevtep_ippool_name }}", ippoolid: "{{ edge_ippool_id }}" }
+    - { ippool_name: "{{ computevtep_ippool_name }}", ippoolid: "{{ compute_ippool_id }}" }
+

@@ -1,21 +1,17 @@
 ---
-- name: Prep
-  wait_for: timeout=5
-
 - name: segment id
   command: cp "{{ seg_xml }}" "{{ seg_tmp }}"
-  when: o_cmd_stat == 'Success'
 
 - name: xml for segid
   xml:
     file: "{{ seg_tmp }}"
     xpath: /segmentRange
     add_children:
-           - id: "{{ segment_id.id }}"
-           - name: "{{ segment_id.name }}"
-           - desc: "{{ segment_id.desc }}"
-           - begin: "{{ segment_id.begin }}"
-           - end: "{{ segment_id.end }}"
+           - id: "{{ segment_id }}"
+           - name: "{{ segment_name }}"
+           - desc: "{{ segment_desc }}"
+           - begin: "{{ segment_begin }}"
+           - end: "{{ segment_end }}"
 
 - name: segment id post
   uri:
@@ -23,19 +19,20 @@
     method: POST
     user: "{{ nsx_user }}"
     password: "{{ nsx_password }}"
-    body: "{{ lookup('file','/tmp/files/segid.xml') }}"
+    body: "{{ lookup('file', item) }}"
     force_basic_auth: yes
     HEADER_Content-Type: "{{ nsx_header }}"
-  ignore_errors: yes
-  register: segid_msg
+    validate_certs: no
+    status_code: 201
+  with_items:
+    - "{{ seg_tmp }}"
+  register: segment_create
 
-- name: segid fact
-  set_fact:
-    segid_stat: "{{ segid_msg.status }}"
-
-- name: Fail when staus not 201
-  fail: msg="{{ seg_fail }}"
-  when: segid_stat != "{{ created_status }}"
+- name: Fail when status not 201
+  fail:
+    msg: "Failed to create segment {{ segment_name }}"
+  when: item.status != 201
+  with_items: "{{ segment_create.results }}"
 
 - name: remove file
   file: path="{{ seg_tmp }}" state=absent

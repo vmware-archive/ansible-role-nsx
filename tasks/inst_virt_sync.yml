@@ -1,5 +1,5 @@
 ---
-- name: Prepare for Network Virtualization
+- name: Sync Host Preparation
   command: cp "{{ instv_xml }}" "{{ item }}"
   with_items:
     - "{{ nsx_tmp }}/{{ vio_cluster_edge_id }}.xml"
@@ -14,9 +14,9 @@
     - { file_name: "{{ nsx_tmp }}/{{ vio_cluster_edge_id }}.xml", cluster_id: "{{ vio_cluster_edge_id }}" }
     - { file_name: "{{ nsx_tmp }}/{{ vio_cluster_compute_id }}.xml", cluster_id: "{{ vio_cluster_compute_id }}" }
 
-- name: Install Network Virtualization Components for Clusters
+- name: Sync Network Virtualization Components for Clusters
   uri:
-    url: "{{ nsx_inst_virt }}"
+    url: "{{ nsx_sync }}"
     method: POST
     user: "{{ nsx_user }}"
     password: "{{ nsx_password }}"
@@ -28,23 +28,11 @@
   with_items:
     - "{{ vio_cluster_edge_id }}.xml"
     - "{{ vio_cluster_compute_id }}.xml"
-  register: installvirt_components
-
-- name: Fail if POST status NOT 200
-  fail:
-    msg: "Installing Network Virtualization Components POST failed"
-  when: item.status != 200
-  with_items: "{{ installvirt_components.results }}" 
-
-- name: Job ids
-  debug: msg="{{ item.content }}"
-  with_items: "{{ installvirt_components.results }}"
+  register: instvirt_syncup
 
 - name: Remove files
   file: path="{{ item }}" state=absent
   with_items:
     - "{{ nsx_tmp }}/{{ vio_cluster_edge_id }}.xml"
     - "{{ nsx_tmp }}/{{ vio_cluster_compute_id }}.xml"
-    
 
-  
