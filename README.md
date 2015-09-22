@@ -14,7 +14,7 @@ forthcoming . . .
 
 ```
 ---
-- hosts: supervio
+- hosts: nsx
   sudo: True
   roles:
     - nsx
