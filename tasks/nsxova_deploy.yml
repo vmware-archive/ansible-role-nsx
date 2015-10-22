@@ -14,6 +14,9 @@
 #  limitations under the License.
 #
 ---
+- name: --> OVFTOOL LOG FILE <--
+  debug: msg="The ovftool log file is /tmp/deploy_nsx_mgr_via_ovftool.log"
+
 - name: Deploy NSX OVA
   shell: >
     {{ ovftool }}
@@ -22,8 +25,10 @@
     --allowExtraConfig
     --noSSLVerify
     --diskMode=thin
+    --X:logFile=/tmp/deploy_nsx_mgr_via_ovftool.log
+    --X:logLevel=verbose
     '--datastore={{ nsx_datastore }}'
-    '--network={{ mgmt_grp }}'
+    '--network={{ nsx_mgmt_net }}'
     '--prop:vsm_cli_en_passwd_0={{ cli_pass }}'
     '--prop:vsm_cli_passwd_0={{ cli_pass }}'
     --ipProtocol=IPv4
@@ -37,18 +42,11 @@
     '--prop:vsm_domain_0={{ nsx_domain }}'
     '--prop:vsm_ntp_0={{ ntp_svr }}'
     '--prop:vsm_isSSHEnabled={{ nsx_ssh_enabled }}'
-    '{{ nsx_ova_location }}/{{ nsx_ova }}'
-    'vi://{{ vcenter_user | urlencode }}:{{ vcenter_password | urlencode }}@{{ vcenter_host }}/{{ datacenter_name }}/host/{{ vio_cluster_mgmt }}/'
+    --powerOn
+    --X:waitForIp
+    '{{ downloads_dir }}/{{ chaperone_nsx_ova }}'
+    'vi://{{ nsx_vcenter_user | urlencode }}:{{ nsx_vcenter_password | urlencode }}@{{ nsx_vcenter_name }}/{{ nsx_datacenter_name }}/host/{{ nsx_cluster_name }}/'
   register: nsx_ova_deploy
 
 - name: debug deploy
   debug: var=nsx_ova_deploy
-
-- name: Start NSX Manager 
-  vsphere_guest:
-    vcenter_hostname: "{{ vcenter_host }}"
-    username: "{{ vcenter_user }}"
-    password: "{{ vcenter_password }}"
-    guest: "{{ nsx_name }}"
-    state: powered_on
-  when: nsx_poweron == "ON"

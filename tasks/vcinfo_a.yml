@@ -22,9 +22,9 @@
     file: "{{ vc_tmp }}"
     xpath: /vcInfo
     add_children:
-          - ipAddress: "{{ vcenter_host }}"
-          - userName: "{{ vcenter_user }}"
-          - password: "{{ vcenter_password }}"
+          - ipAddress: "{{ nsx_vcenter_name }}"
+          - userName: "{{ nsx_vcenter_user }}"
+          - password: "{{ nsx_vcenter_password }}"
           - certificateThumbprint: "{{ vcert }}"
 
 - name: vCenter Authentication PUT request

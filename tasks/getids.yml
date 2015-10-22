@@ -18,16 +18,15 @@
   ignore_errors: yes
   local_action:
     module: vcenter_query
-    host: "{{ vcenter_host }}"
-    login: "{{ vcenter_user }}"
-    password: "{{ vcenter_password }}"
-    port: "{{ vcenter_port }}"
+    host: "{{ nsx_vcenter_name }}"
+    login: "{{ nsx_vcenter_user }}"
+    password: "{{ nsx_vcenter_password }}"
+    port: "{{ nsx_vcenter_port }}"
     resourcename: "{{ item.vcenter_object_name }}"
     resourcevarname: "{{ item.vcenter_object_var }}"
     resourcetype: 'cluster'
     getfacts: 'yes'
   with_items:
-    - { vcenter_object_name: "{{ vio_cluster_mgmt }}", vcenter_object_var: 'vio_cluster_mgmt_id' }
     - { vcenter_object_name: "{{ vio_cluster_edge }}", vcenter_object_var: 'vio_cluster_edge_id' }
     - { vcenter_object_name: "{{ vio_cluster_compute }}", vcenter_object_var: 'vio_cluster_compute_id' }
 
@@ -35,10 +34,10 @@
   ignore_errors: yes
   local_action:
     module: vcenter_query
-    host: "{{ vcenter_host }}"
-    login: "{{ vcenter_user }}"
-    password: "{{ vcenter_password }}"
-    port: "{{ vcenter_port }}"
+    host: "{{ nsx_vcenter_name }}"
+    login: "{{ nsx_vcenter_user }}"
+    password: "{{ nsx_vcenter_password }}"
+    port: "{{ nsx_vcenter_port }}"
     resourcename: "{{ item.vcenter_object_name }}"
     resourcevarname: "{{ item.vcenter_object_var }}"
     resourcetype: 'datastore'
@@ -50,10 +49,10 @@
   ignore_errors: yes
   local_action:
     module: vcenter_query
-    host: "{{ vcenter_host }}"
-    login: "{{ vcenter_user }}"
-    password: "{{ vcenter_password }}"
-    port: "{{ vcenter_port }}"
+    host: "{{ nsx_vcenter_name }}"
+    login: "{{ nsx_vcenter_user }}"
+    password: "{{ nsx_vcenter_password }}"
+    port: "{{ nsx_vcenter_port }}"
     resourcename: "{{ item.vcenter_object_name }}"
     resourcevarname: "{{ item.vcenter_object_var }}"
     resourcetype: 'dvs'
@@ -65,10 +64,10 @@
   ignore_errors: yes
   local_action:
     module: vcenter_query
-    host: "{{ vcenter_host }}"
-    login: "{{ vcenter_user }}"
-    password: "{{ vcenter_password }}"
-    port: "{{ vcenter_port }}"
+    host: "{{ nsx_vcenter_name }}"
+    login: "{{ nsx_vcenter_user }}"
+    password: "{{ nsx_vcenter_password }}"
+    port: "{{ nsx_vcenter_port }}"
     resourcename: "{{ item.vcenter_object_name }}"
     resourcevarname: "{{ item.vcenter_object_var }}"
     resourcetype: 'dvs-port'
@@ -80,10 +79,10 @@
   ignore_errors: no
   local_action:
     module: get_cluster_resgroup
-    host: "{{ vcenter_host }}"
-    login: "{{ vcenter_user }}"
-    password: "{{ vcenter_password }}"
-    port: "{{ vcenter_port }}"
+    host: "{{ nsx_vcenter_name }}"
+    login: "{{ nsx_vcenter_user }}"
+    password: "{{ nsx_vcenter_password }}"
+    port: "{{ nsx_vcenter_port }}"
     cluster: "{{ item.vcenter_name }}"
     resourcevarname: "{{ item.vcenter_var }}"
   with_items:

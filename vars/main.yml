@@ -14,9 +14,6 @@
 #  limitations under the License.
 #
 ---
-##### nsx ova deploy
-nsx_ova: "VMware-NSX-Manager-6.1.4-2691049.ova"
-nsx_ova_location: "/var/www/html/downloads"
 ##### nsx configure
 # nsx default username
 nsx_user: "admin"

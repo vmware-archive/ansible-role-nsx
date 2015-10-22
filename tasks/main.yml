@@ -14,7 +14,7 @@
 #  limitations under the License.
 #
 ---
-- name: depoloy NSX OVA
+- name: Deploy NSX OVA
   include: nsxova_deploy.yml tags=nsxdeploy
 
 - name: Configure NSX
