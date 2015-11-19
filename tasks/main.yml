@@ -19,3 +19,9 @@
 
 - name: Configure NSX
   include: nsx_configure.yml tags=nsxconfig
+
+- name: Create an Edge
+  include: create_edge.yml
+
+- name: NSX RAML Client Configuration
+  include: base-config-nsx.yml

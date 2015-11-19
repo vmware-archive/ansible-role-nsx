@@ -1,0 +1,57 @@
+#
+#  Copyright 2015 VMware, Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+---
+- name: Create Edge
+  nsx_edge:
+    nsxmanager_spec:
+      raml_file: "/opt/supersddc-ansible/roles/nsx/files/nsxvapiv614.raml"
+      host: "{{ nsx_edge_manager_host }}"
+      user: "{{ nsx_edge_manager_user }}"
+      password: "{{ nsx_edge_manager_password }}"
+    state: present
+    name: "{{ nsx_edge_name }}"
+    fqdn: "{{ nsx_edge_fqdn }}"
+    description: "{{ nsx_edge_description }}"
+    tenant: "{{ nsx_edge_tenant }}"
+    cliSettings:
+      userName: "{{ nsx_edge_cliSettings_userName }}"
+      password: "{{ nsx_edge_cliSettings_password }}"
+      remoteAccess: "{{ nsx_edge_cliSettings_remoteAccess }}"
+    appliance:
+      datacenterMoid: "{{ nsx_edge_appliance_datacenterMoid }}"
+      applianceSize: "{{ nsx_edge_appliance_applianceSize }}"
+      resourcePoolId: "{{ nsx_edge_appliance_resourcePoolId }}"
+      datastoreId: "{{ nsx_edge_appliance_datastoreId }}"
+      hostId: "{{ nsx_edge_appliance_hostId }}"
+      vmFolderId: "{{ nsx_edge_appliance_vmFolderId }}"
+    vnic:
+      enableProxyArp: "{{ nsx_edge_vnic_enableProxyArp }}"
+      enableSendRedirects: "{{ nsx_edge_vnic_enableSendRedirects }}"
+      fenceParameter: "{{ nsx_edge_vnic_fence_parameters }}"
+      isConnected: "{{ nsx_edge_vnic_isConnected }}"
+      primaryAddress: "{{ nsx_edge_vnic_primaryAddress }}"
+      subnetMask: "{{ nsx_edge_vnic_subnetMask }}"
+      subnetPrefixLength: "{{ nsx_edge_vnic_subnetPrefixLength }}"
+      portgroupId: "{{ nsx_edge_vnic_portgroupId }}"
+      mtu: "{{ nsx_edge_vnic_mtu }}"
+      name: "{{ nsx_edge_vnic_name }}"
+      type: "{{ nsx_edge_vnic_type }}"
+      index: "0"
+    defaultRoute:
+      vnic: "{{ nsx_edge_default_gateway_vnic }}"
+      gatewayAddress: "{{ nsx_edge_default_gatewayAddress }}"
+      mtu: "{{ nsx_edge_default_gateway_mtu }}"
+  tags: nsx_edge
