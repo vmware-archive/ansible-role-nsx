@@ -54,4 +54,13 @@
       vnic: "{{ nsx_edge_default_gateway_vnic }}"
       gatewayAddress: "{{ nsx_edge_default_gatewayAddress }}"
       mtu: "{{ nsx_edge_default_gateway_mtu }}"
+    defaultPolicy:
+      action: "{{ nsx_edge_defaultPolicy_action }}"
+      loggingEnabled: "{{ nsx_edge_defaultPolicy_loggingEnabled }}"
+    highAvailability:
+      enabled: "{{ nsx_edge_highAvailability_enabled }}"
+      vnic: "{{ nsx_edge_highAvailability_vnic }}"
+      declareDeadTime: "{{ nsx_edge_highAvailability_declareDeadTime }}"
+      managementIp1: "{{ nsx_edge_highAvailability_managementIp1 }}"
+      managementIp2: "{{ nsx_edge_highAvailability_managementIp2 }}"
   tags: nsx_edge
