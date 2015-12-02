@@ -1,0 +1,76 @@
+---
+nsx_ip: {{ nsxmgr_ip_address }}
+deployMgmtDatastoreName: {{ nsxmgr_datastore }}
+deployMgmtPortGroup: {{ nsxmgr_mgmt_net }}
+deployVmName: {{ nsxmgr_appliance_name }}
+deployHostname: {{ nsxmgr_hostname }}
+deployMgmtDnsServer: {{ dns_server }}
+deployNtpServers: {{ ntp_server }}
+deployMgmtDnsDomain: {{ dns_domain }}
+deployMgmtDefaultGateway: {{ nsxmgr_ip_gateway }}
+deployMgmtIpAddress: {{ nsxmgr_ip_address }}
+deployMgmtNetmask: {{ nsxmgr_ip_netmask }}
+nsxCliPass: {{ nsxmgr_admin_password }}
+nsxEnPass: {{ nsxmgr_enable_password }}
+nsxmanOvaPath: {{ downloads_dir }}
+nsxmanOva: {{ chaperone_nsx_ova }}
+{% if deploy_vcenter == '1' and enable_oob_mgmt_svcs == '0' %}
+deployVcIPAddress: {{ nsxmgr_vcenter_url }}
+deployVcUser: {{ nsxmgr_vcenter_user }}
+deployVcPassword: {{ nsxmgr_vcenter_password }}
+deployDataCenterName: {{ nsxmgr_datacenter_name }}
+deployCluster: {{ nsxmgr_cluster_deploy }}
+{% endif %}
+{% if deploy_vcenter == '1' and enable_oob_mgmt_svcs == '1' %}
+deployVcIPAddress: {{ oob_vcenter_url }}
+deployVcUser: {{ oob_vcenter_user_name }}
+deployVcPassword: {{ oob_vcenter_password }}
+deployDataCenterName: {{ oob_vcenter_datacenter_name }}
+deployCluster: {{ oob_vcenter_mgmt_cluster_name }}
+{% endif %}
+
+##### nsx configure
+# nsx default username
+nsx_user: "admin"
+nsx_password: {{ "{{ cli_pass }}" }}
+vcert: {{ "{{ vcenter_auth }}" }}
+##### NSX api calls
+nsx_header: 'application/xml'
+nsx_api: "https://{{ nsx_ip }}/api/2.0"
+nsx_app_api: "https://{{ nsx_ip }}/api/1.0/appliance-management/system/syslogserver"
+nsx_services_api: "{{ nsx_api }}/services"
+nsx_vdn_api: "{{ nsx_api }}/vdn"
+nsx_controller: "{{ nsx_vdn_api }}/controller"
+nsx_jobstatus: "{{ nsx_controller }}/progress/"
+nsx_inst_virt: "{{ nsx_api }}/nwfabric/configure"
+nsx_vccon: "{{ nsx_services_api }}/vcconfig"
+nsx_ippool: "{{ nsx_services_api }}/ipam/pools/scope/globalroot-0"
+nsx_seg: "{{ nsx_vdn_api }}/config/segments"
+nsx_scope: "{{ nsx_vdn_api }}/scopes"
+nsx_sync: "{{ nsx_api }}/nwfabric/configure?action=synchronize"
+nsx_resolve: "{{ nsx_api }}/nwfabric/resolveIssues"
+##### NSX xml source xml files
+nsx_root: '/opt/supervio-ansible/roles/nsx'
+nsx_tmp: '/tmp/files'
+nsx_files: '/opt/supervio-ansible/roles/nsx/files'
+vc_xml: "{{ nsx_files }}/vcinfo.xml"
+vc_tmp: "{{ nsx_tmp }}/vcinfo.xml"
+sys_xml: "{{ nsx_files }}/nsxsys.xml"
+sys_tmp: "{{ nsx_tmp }}/nsxsys.xml"
+instv_xml: "{{ nsx_files }}/inst_virt.xml"
+seg_xml: "{{ nsx_files }}/segid.xml"
+seg_tmp: "{{ nsx_tmp }}/segid.xml"
+vdnscope_xml: "{{ nsx_files }}/vdnscopes.xml"
+vdnscope_tmp: "{{ nsx_tmp }}/vdnscopes.xml"
+ippool_xml: "{{ nsx_files }}/ippool.xml"
+ippool_tmp: "{{ nsx_tmp }}/ippool.xml"
+controller_xml: "{{ nsx_files }}/contrl_spec.xml"
+controller_tmp: "{{ nsx_tmp }}/contrl_spec.xml"
+jobstatus_dest: "{{ nsx_tmp }}/jobstatus.xml"
+ippoolids: "{{ nsx_tmp }}/ippool_ids"
+vxlan_xml: "{{ nsx_files }}/vxlan.xml"
+vxlan_tmp: "{{ nsx_tmp }}/vxlan.xml"
+vxlan:
+ featureId: 'com.vmware.vshield.vsm.vxlan'
+ configspec: 'clusterMappingSpec'
+ vdscon: 'vdsContext'
