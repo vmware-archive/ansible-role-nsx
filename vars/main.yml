@@ -35,9 +35,9 @@ nsx_scope: "{{ nsx_vdn_api }}/scopes"
 nsx_sync: "{{ nsx_api }}/nwfabric/configure?action=synchronize"
 nsx_resolve: "{{ nsx_api }}/nwfabric/resolveIssues"
 ##### NSX xml source xml files
-nsx_root: '/opt/supervio-ansible/roles/nsx'
+nsx_root: '/opt/{{ django_app }}-ansible/roles/nsx'
 nsx_tmp: '/tmp/files'
-nsx_files: '/opt/supervio-ansible/roles/nsx/files'
+nsx_files: '/opt/{{ django_app }}-ansible/roles/nsx/files'
 vc_xml: "{{ nsx_files }}/vcinfo.xml"
 vc_tmp: "{{ nsx_tmp }}/vcinfo.xml"
 sys_xml: "{{ nsx_files }}/nsxsys.xml"

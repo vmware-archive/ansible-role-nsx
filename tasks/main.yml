@@ -15,13 +15,13 @@
 #
 ---
 - name: Remove the existing nsx vars/main.yml file
-  command: /bin/rm -f /opt/supervio-ansible/roles/nsx/vars/main.yml
+  command: /bin/rm -f /opt/{{ django_app }}-ansible/roles/nsx/vars/main.yml
   tags:
     - nsx_deploy_ova
 
 # Following tasks are maintained in the nsxansible project
 - name: Update the nsx vars/main.yml file
-  template: src=/opt/supervio-ansible/roles/nsx/templates/main.yml.j2 dest=/opt/supervio-ansible/roles/nsx/vars/main.yml
+  template: src=/opt/{{ django_app }}-ansible/roles/nsx/templates/main.yml.j2 dest=/opt/{{ django_app }}-ansible/roles/nsx/vars/main.yml
   tags:
     - nsx_deploy_ova
 
