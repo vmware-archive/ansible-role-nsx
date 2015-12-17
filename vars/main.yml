@@ -59,4 +59,3 @@ vxlan:
  featureId: 'com.vmware.vshield.vsm.vxlan'
  configspec: 'clusterMappingSpec'
  vdscon: 'vdsContext'
-pyvmomi_version: "5.5.0-2014.1.1"

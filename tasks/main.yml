@@ -14,9 +14,6 @@
 #  limitations under the License.
 #
 ---
-- name: Install pyvmomi
-  pip: name="pyvmomi" state=present version="{{ pyvmomi_version }}"
-
 - name: Remove the existing nsx vars/main.yml file
   command: /bin/rm -f /opt/{{ django_app }}-ansible/roles/nsx/vars/main.yml
   tags:
