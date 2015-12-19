@@ -14,5 +14,5 @@
 #  limitations under the License.
 #
 ---
-##### this is where the UI installs the ovftool this by default
+# this is where the UI installs the ovftool this by default
 ovftool: /usr/local/bin/ovftool/ovftool

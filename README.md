@@ -1,18 +1,25 @@
-# ansible-role-elasticsearch
+# ansible-role-nsx
 
 Ansible playbook to automate installing and maintaining VMware NSX.
 
 ## Requirements
 
-forthcoming . . .
+This role has a single dependency on the [Chaperone](https://github.com/vmware/chaperone)
+project. In particular, this role requires that an external source(e.g., the
+playbook) define the variable django_app, which usually is "chaperone" but may
+be set to any value that defines the 'chaperone application' intending to
+configure and install NSX.
 
 ## Role Variables
 
-... forthcoming
+```yaml
+# this is where the UI installs the ovftool this by default
+ovftool: /usr/local/bin/ovftool/ovftool
+```
 
 ## Example playbook
 
-```
+```yaml
 ---
 - hosts: nsx
   sudo: True
