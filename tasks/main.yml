@@ -14,71 +14,67 @@
 #  limitations under the License.
 #
 ---
-- name: Remove the existing nsx vars/main.yml file
-  command: /bin/rm -f /opt/{{ django_app }}-ansible/roles/nsx/vars/main.yml
+- name: Create the nsx defaults/main.yml file
+  template: src=../templates/defaults.yml.j2 dest={{ nsx_role_directory }}/defaults/main.yml
+  tags:
+    - create_vars_files
+
+- name: Deploy NSX Manager
+  include: deploy-nsx-ova.yml
   tags:
     - nsx_deploy_ova
 
-# Following tasks are maintained in the nsxansible project
-- name: Update the nsx vars/main.yml file
-  template: src=/opt/{{ django_app }}-ansible/roles/nsx/templates/main.yml.j2 dest=/opt/{{ django_app }}-ansible/roles/nsx/vars/main.yml
-  tags:
-    - nsx_deploy_ova
+- name: Register NSX Manager to vCenter
+  include: base-config-nsx.yml tags=nsx_vc_registration
 
-# - name: Deploy NSX Manager
-#   include: deploy-nsx-ova.yml tags=nsx_deploy_ova
-#
-# - name: Register NSX Manager to vCenter
-#   include: base-config-nsx.yml tags=nsx_vc_registration
-#
-# - name: Connect NSX Manager to SSO
-#   include: base-config-nsx.yml tags=nsx_vc_registration
-#
-# - name: Gather vCenter Mgmt Cluster moid
-#   include: base-config-nsx.yml tags=vsphere_facts
-#
-# - name: Gather vCenter management datastore moid
-#   include: base-config-nsx.yml tags=vsphere_facts
-#
-# - name: Gather vCenter management portgroup moid
-#   include: base-config-nsx.yml tags=vsphere_facts
-#
-# - name: Create IP Controller IP Pools
-#   include: base-config-nsx.yml tags=nsx_ippools
-#
-# - name: Create NSX Controller cluster
-#   include: base-config-nsx.yml tags=nsx_controllers
-#
-# - name: Gather vCenter compute Cluster moid
-#   include: base-config-nsx.yml tags=vsphere_facts
-#
-# - name: Install VIBs (prepare) the compute cluster
-#   include: base-config-nsx.yml tags=nsx_cluster_prep
-#
-# - name: Install VIBs (prepare) the mgmt and edge cluster
-#   include: base-config-nsx.yml tags=nsx_cluster_prep
-#
-# - name: Gather vCenter Transport DVS moid
-#   include: base-config-nsx.yml tags=vsphere_facts
-#
-# - name: Create VTEP IP Pools
-#   include: base-config-nsx.yml tags=nsx_ippools
-#
-# - name: VXLAN Prep (configure VTEP) on compute cluster
-#   include: base-config-nsx.yml tags=nsx_vxlan_prep
-#
-# - name: VXLAN Prep (configure VTEP) on mgmt cluster
-#   include: base-config-nsx.yml tags=nsx_vxlan_prep
-#
-# - name: Create Segment Id Pool
-#   include: base-config-nsx.yml tags=nsx_segment_pool
-#
-# - name: Add a Transport Zone with the Cluters as members
-#   include: base-config-nsx.yml tags=nsx_transport_zone
-# # nnsxansible tasks
-#
+- name: Connect NSX Manager to SSO
+  include: base-config-nsx.yml tags=nsx_vc_registration
+
+- name: Gather vCenter Mgmt Cluster moid
+  include: base-config-nsx.yml tags=vsphere_facts
+
+- name: Gather vCenter management datastore moid
+  include: base-config-nsx.yml tags=vsphere_facts
+
+- name: Gather vCenter management portgroup moid
+  include: base-config-nsx.yml tags=vsphere_facts
+
+- name: Create IP Controller IP Pools
+  include: base-config-nsx.yml tags=nsx_ippools
+
+- name: Create NSX Controller cluster
+  include: base-config-nsx.yml tags=nsx_controllers
+
+- name: Gather vCenter compute Cluster moid
+  include: base-config-nsx.yml tags=vsphere_facts
+
+- name: Install VIBs (prepare) the compute cluster
+  include: base-config-nsx.yml tags=nsx_cluster_prep
+
+- name: Install VIBs (prepare) the mgmt and edge cluster
+  include: base-config-nsx.yml tags=nsx_cluster_prep
+
+- name: Gather vCenter Transport DVS moid
+  include: base-config-nsx.yml tags=vsphere_facts
+
+- name: Create VTEP IP Pools
+  include: base-config-nsx.yml tags=nsx_ippools
+
+- name: VXLAN Prep (configure VTEP) on compute cluster
+  include: base-config-nsx.yml tags=nsx_vxlan_prep
+
+- name: VXLAN Prep (configure VTEP) on mgmt cluster
+  include: base-config-nsx.yml tags=nsx_vxlan_prep
+
+- name: Create Segment Id Pool
+  include: base-config-nsx.yml tags=nsx_segment_pool
+
+- name: Add a Transport Zone with the Cluters as members
+  include: base-config-nsx.yml tags=nsx_transport_zone
+# nnsxansible tasks
+
 # - name: Create an Edge
 #   include: create_edge.yml
-#
-# - name: NSX RAML Client Configuration
-#   include: base-config-nsx.yml
+
+- name: NSX RAML Client Configuration
+  include: base-config-nsx.yml

@@ -14,15 +14,34 @@
 #  limitations under the License.
 #
 ---
+nsx_role_directory: "/opt/chaperone-ansible/roles/nsx"
+ovfToolPath: "/usr/local/bin/ovftool"
+downloads_dir: "/var/www/html/downloads"
+chaperone_nsx_ova: "VMware-NSX-Manager-6.1.4-2691049.ova"
+nsx_ip: "{{ nsxmgr_ip_address }}"
+deployMgmtDatastoreName: "{{ nsxmgr_datastore }}"
+deployMgmtPortGroup: "{{ nsxmgr_mgmt_portgroup }}"
+deployVmName: "{{ nsxmgr_appliance_name }}"
+deployHostname: "{{ nsxmgr_appliance_name }}"
+deployMgmtDnsServer: "{{ dns_server }}"
+deployNtpServers: "{{ ntp_server }}"
+deployMgmtDnsDomain: "{{ dns_domain_name }}"
+deployMgmtDefaultGateway: "{{ nsxmgr_ip_gateway }}"
+deployMgmtIpAddress: "{{ nsxmgr_ip_address }}"
+deployMgmtNetmask: "{{ nsxmgr_ip_netmask }}"
+nsxCliPass: "{{ nsxmgr_admin_password }}"
+nsxEnPass: "{{ nsxmgr_enable_password }}"
+nsxmanOvaPath: "{{ downloads_dir }}"
+nsxmanOva: "{{ chaperone_nsx_ova }}"
 ##### nsx configure
 # nsx default username
 nsx_user: "admin"
-nsx_password: "{{ cli_pass }}"
+nsx_password: "{{ nsxmgr_admin_password }}"
 vcert: "{{ vcenter_auth }}"
 ##### NSX api calls
 nsx_header: 'application/xml'
-nsx_api: "https://{{ nsx_ip }}/api/2.0"
-nsx_app_api: "https://{{ nsx_ip }}/api/1.0/appliance-management/system/syslogserver"
+nsx_api: "https://{{ nsxmgr_ip_address }}/api/2.0"
+nsx_app_api: "https://{{ nsxmgr_ip_address }}/api/1.0/appliance-management/system/syslogserver"
 nsx_services_api: "{{ nsx_api }}/services"
 nsx_vdn_api: "{{ nsx_api }}/vdn"
 nsx_controller: "{{ nsx_vdn_api }}/controller"
@@ -59,3 +78,8 @@ vxlan:
  featureId: 'com.vmware.vshield.vsm.vxlan'
  configspec: 'clusterMappingSpec'
  vdscon: 'vdsContext'
+nsxmanager_spec:
+  raml_files: "../files/nsxvapi614.raml"
+  host: "{{ nsx_ip }}"
+  user: "{{ nsx_user }}"
+  password: "{{ nsxmgr_admin_password }}"
