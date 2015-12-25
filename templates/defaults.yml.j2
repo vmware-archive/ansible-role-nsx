@@ -14,73 +14,87 @@
 #  limitations under the License.
 #
 ---
+nsxmanager_spec: 
+  raml_file: '/opt/chaperone-ansible/roles/nsx/files/nsxvapiv614.raml'
+  host: "{{ deployMgmtIpAddress }}"
+  user: 'admin'
+  password: "{{ nsxCliPass }}"
 
-{% if (deploy_vcenter == '1' and enable_oob_mgmt_svcs == '0') or deploy_vcenter == '0' %}
-deployVcIPAddress: {{ nsxmgr_vcenter_url }}
-deployVcUser: {{ nsxmgr_vcenter_user }}
-deployVcPassword: {{ nsxmgr_vcenter_password }}
-deployDataCenterName: {{ nsxmgr_datacenter_name }}
-deployCluster: {{ nsxmgr_cluster_deploy }}
-vcIpAddress: {{ nsxmgr_vcenter_url }}
-vcUser: {{ nsxmgr_vcenter_user }}
-vcPassword: {{ nsxmgr_vcenter_password }}
-vcHostname: {{ ib_vcenter_appliance_name }}.{{ dns_domain_name }}
-{% if psc_appliance_deployment_scheme == 'Existing' or psc_appliance_deployment_scheme == 'Dedicated' %}
-sso_lookupservice_server: {{ ib_vcenter_psc_appliance_dns_name_manual }}
-sso_admin_username: "administrator@vsphere.local"
-sso_admin_password: {{ ib_vcenter_admin_password }}
+{% if numControllers == 3 %}
+controllerDeployType: "full"
+{% elif numControllers == 1 %}
+controllerDeployType: "single"
 {% endif %}
-{% if psc_appliance_deployment_scheme == 'Embedded'}
-sso_lookupservice_server: {{ ib_vcenter_appliance_name }}.{{ dns_domain_name }}
-sso_admin_username: {{ ib_psc_sso_user_nanme }}@{{ oob_psc_sso_domain_name }}
-sso_admin_password: {{ ib_psc_sso_password }}
+
+{% if deploy_nsx == '1' %}
+{% set configure_nsx_manager = '1' %}
+deployMgmtDnsServer: "{{ dns_server }}"
+deployMgmtDnsDomain: "{{ dns_domain_name }}"
+deployNtpServers: "{{ ntp_server }}"
+deploySyslogServer: "{{ syslog_server }}"
+deployHostname: "{{ deployVmName }}.{{ dns_domain_name }}"
+nsxEnPass: "{{ nsxCliPass }}"
+nsxmanOvaPath: '/var/www/html/downloads'
+nsxmanOva: 'VMware-NSX-Manager-6.1.4-2691049.ova'
+ovfToolPath: '/usr/bin'
 {% endif %}
-{% if deploy_vcenter == '1' and enable_oob_mgmt_svcs == '1' %}
-deployVcIPAddress: {{ oob_vcenter_url }}
-deployVcUser: {{ oob_vcenter_user_name }}
-deployVcPassword: {{ oob_vcenter_user_password }}
-deployDataCenterName: {{ oob_vcenter_datacenter_name }}
-deployCluster: {{ oob_vcenter_mgmt_esx_cluster_name }}
-vcHostname: {{ oob_vcenter_appliance_name }}.{{ dns_domain_name }}
-{% if psc_appliance_deployment_scheme == 'Existing' or psc_appliance_deployment_scheme == 'Dedicated' %}
-sso_lookupservice_server: {{ oob_vcenter_psc_appliance_dns_name_manual }}
-sso_admin_username: "administrator@vsphere.local"
-sso_admin_password: {{ oob_vcenter_admin_password }}
-{% endif %}
-{% if psc_appliance_deployment_scheme == 'Embedded'}
-sso_lookupservice_server: {{ oob_vcenter_appliance_name }}.{{ dns_domain_name }}
-sso_admin_username: {{ oob_psc_sso_user_nanme }}@{{ oob_psc_sso_domain_name }}
-sso_admin_password: {{ oob_psc_sso_password }}
-{% endif %}
-{% endif %}
-targetDatacenterName: {{ nsxmgr_datacenter_name }}
-targetClusters:
-  cluster1:
-    clusterName: {{ ib_vcenter_compute_esx_cluster_name }}
-  cluster2:
-    clusterName: {{ ib_vcenter_nsxedge_esx_cluster_name }}
-nsxControllerDatastore: {{ ib_vcenter_esx_datastore }}
-nsxControllerPortGroup: {{ ib_vcenter_esx_portgroup }}
-nsxControllerVcCluster: {{ ib_vcenter_mgmt_esx_cluster_name }}
+{% if configure_nsx_manager == '1' %}
+controllerSyslogServer: "{{ syslog_server }}"
 nsxIppools:
   controller:
-    name: {{ nsxcontroller_ippool_name }}
-    start_ip: {{ nsxcontroller_ippool_range_start }}
-    end_ip: {{ nsxcontroller_ippool_range_end }}
-    prefix_length: {{ nsxcontroller_ippool_prefix }}
-    gateway: {{ nsxcontroller_ippool_gw }}
-    dns_server_1: {{ dns_server }}
-    dns_server_2:
+    name: 'CONTROLLER'
+    start_ip: "{{ controllerIPpoolStartAddr }}"
+    end_ip: "{{ controllerIPpoolEndAddr }}"
+    prefix_length: "{{ controllerIPpoolPrefix }}"
+    gateway: "{{ controllerIPpoolGateway }}"
+    dns_server_1: "{{ dns_server }}"
+    dns_server_2: "{{ controllerIPpoolSecondDns }}"
   vteps:
-    name: {{ nsxedge_vtep_ippool_name }}
-    start_ip: {{ nsxedge_vtep_ippool_range_start }}
-    end_ip: {{ nsxedge_vtep_ippool_range_end }}
-    prefix_length: {{ nsxedge_vtep_ippool_prefix }}
-    gateway: {{ nsxedge_vtep_ippool_gw }}
-    dns_server_1: {{ dns_server }}
-    dns_server_2:
-controllerSyslogServer: {{ syslog_server }}
-controllerPassword: {{ nsxcontroller_admin_password }}
-targetVdsName: {{ ib_vcenter_net_vds_name }}
-transportZoneName: {{ nsx_transport_zone_name }}
-defaultControlPlaneMode: "UNICAST MODE"
+    name: 'VTEP'
+    start_ip: "{{ vtepIPpoolStartAddr }}"
+    end_ip: "{{ vtepIPpoolEndAddr }}"
+    prefix_length: "{{ vtepIPpoolPrefix }}"
+    gateway: "{{ vtepIPpoolGateway }}"
+    dns_server_1: "{{ dns_server }}"
+    dns_server_2: "{{ vtepIPpoolSecondDns }}"
+targetClusters:
+  cluster1:
+    clusterName: "{{ hostPrepClusterA }}"
+  cluster2:
+    clusterName: "{{ hostPrepClusterB }}"
+{% if mcastIsEnabled == '1' %}
+mcastEnabled: True
+{% elif mcastIsEnabled == '0' %}
+mcastEnabled: False
+{% endif %}
+{% elif (configure_nsx_manager == '1') and (deploy_nsx == '0') %}
+controllerSyslogServer: "{{ syslog_server }}"
+nsxIppools:
+  controller:
+    name: 'CONTROLLER'
+    start_ip: "{{ controllerIPpoolStartAddr }}"
+    end_ip: "{{ controllerIPpoolEndAddr }}"
+    prefix_length: "{{ controllerIPpoolPrefix }}"
+    gateway: "{{ controllerIPpoolGateway }}"
+    dns_server_1: "{{ dns_server }}"
+    dns_server_2: "{{ controllerIPpoolSecondDns }}"
+  vteps:
+    name: 'VTEP'
+    start_ip: "{{ vtepIPpoolStartAddr }}"
+    end_ip: "{{ vtepIPpoolEndAddr }}"
+    prefix_length: "{{ vtepIPpoolPrefix }}"
+    gateway: "{{ vtepIPpoolGateway }}"
+    dns_server_1: "{{ dns_server }}"
+    dns_server_2: "{{ vtepIPpoolSecondDns }}"
+targetClusters:
+  cluster1:
+    clusterName: "{{ hostPrepClusterA }}"
+  cluster2:
+    clusterName: "{{ hostPrepClusterB }}"
+{% if mcastIsEnabled == '1' %}
+mcastEnabled: True
+{% elif mcastIsEnabled == '0' %}
+mcastEnabled: False
+{% endif %}
+{% endif %}
+
