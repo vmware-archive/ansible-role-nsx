@@ -36,7 +36,7 @@ deployHostname: "{{ deployVmName }}.{{ dns_domain_name }}"
 nsxEnPass: "{{ nsxCliPass }}"
 nsxmanOvaPath: '/var/www/html/downloads'
 nsxmanOva: 'VMware-NSX-Manager-6.1.4-2691049.ova'
-ovfToolPath: '/usr/bin'
+ovfToolPath: '/usr/local/bin/ovftool'
 {% endif %}
 {% if configure_nsx_manager == '1' %}
 controllerSyslogServer: "{{ syslog_server }}"
