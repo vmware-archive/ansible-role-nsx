@@ -20,10 +20,10 @@ nsxmanager_spec:
   user: 'admin'
   password: "{{ nsxCliPass }}"
 
-{% if numControllers == 3 %}
-controllerDeployType: "full"
-{% elif numControllers == 1 %}
-controllerDeployType: "single"
+{% if numControllers == '3' %}
+controllerDeployType: 'full'
+{% elif numControllers == '1' %}
+controllerDeployType: 'single'
 {% endif %}
 
 {% if deploy_nsx == '1' %}

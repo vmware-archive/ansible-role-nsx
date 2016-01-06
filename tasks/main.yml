@@ -21,10 +21,7 @@
 
 - name: Deploy NSX Manager
   include: deploy-nsx-ova.yml
-  tags:
-    - deploy_nsx_manager
 
 - name: Configure NSX Manager
   include: base-config-nsx.yml
-  tags:
-    - configure_nsx_manager
+
