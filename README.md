@@ -1,7 +1,7 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+Role to configure and deploy NSX for vCenter
 
 Requirements
 ------------
