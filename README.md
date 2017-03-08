@@ -1,47 +1,38 @@
-# ansible-role-nsx
+Role Name
+=========
 
-Ansible playbook to automate installing and maintaining VMware NSX.
+A brief description of the role goes here.
 
-## Requirements
+Requirements
+------------
 
-This role has a single dependency on the [Chaperone](https://github.com/vmware/chaperone)
-project. In particular, this role requires that an external source(e.g., the
-playbook) define the variable django_app, which usually is "chaperone" but may
-be set to any value that defines the 'chaperone application' intending to
-configure and install NSX.
+Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
-## Role Variables
+Role Variables
+--------------
 
-```yaml
-# this is where the UI installs the ovftool this by default
-ovftool: /usr/local/bin/ovftool/ovftool
-```
+A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
 
-## Example playbook
+Dependencies
+------------
 
-```yaml
----
-- hosts: nsx
-  sudo: True
-  roles:
-    - nsx
-  vars:
-    - ... forthcoming
-```
+A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 
-# License and Copyright
- 
-Copyright 2015 VMware, Inc.
+Example Playbook
+----------------
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    - hosts: servers
+      roles:
+         - { role: username.rolename, x: 42 }
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+License
+-------
 
+BSD
+
+Author Information
+------------------
+
+An optional section for the role authors to include contact information, or a website (HTML is not allowed).
