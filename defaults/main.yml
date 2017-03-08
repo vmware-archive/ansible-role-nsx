@@ -1,0 +1,46 @@
+---
+global_state: "{{ desired_state }}"
+
+nsxmanager_spec:
+  raml_file: '/opt/chaperone-ansible/roles/nsx/files/nsxvapi.raml'
+  host: "{{ deployMgmtIpAddress }}"
+  user: 'admin'
+  password: "{{ nsxCliPass }}"
+
+controllerDeployType: 'full'
+deployMgmtDnsServer: "{{ dns_server }}"
+deployMgmtDnsDomain: "{{ dns_domain_name }}"
+deployNtpServers: "{{ ntp_server }}"
+deploySyslogServer: "{{ syslog_server }}"
+deployHostname: "{{ deployVmName }}.{{ dns_domain_name }}"
+nsxEnPass: "{{ nsxCliPass }}"
+nsxmanOvaPath: '/home/vmware/data/nsx'
+nsxmanOva: 'VMware-NSX-Manager-6.2.4-4292526.ova'
+ovfToolPath: '/usr/local/bin/ovftool'
+controllerSyslogServer: "{{ syslog_server }}"
+mcastEnabled: False
+mcastAddrStart: ""
+mcastAddrEnd: ""
+
+nsxIppools:
+  controller:
+    name: 'CONTROLLER'
+    start_ip: "{{ controllerIPpoolStartAddr }}"
+    end_ip: "{{ controllerIPpoolEndAddr }}"
+    prefix_length: "{{ controllerIPpoolPrefix }}"
+    gateway: "{{ controllerIPpoolGateway }}"
+    dns_server_1: "{{ dns_server }}"
+    dns_server_2: "{{ controllerIPpoolSecondDns }}"
+  vteps:
+    name: 'VTEP'
+    start_ip: "{{ vtepIPpoolStartAddr }}"
+    end_ip: "{{ vtepIPpoolEndAddr }}"
+    prefix_length: "{{ vtepIPpoolPrefix }}"
+    gateway: "{{ vtepIPpoolGateway }}"
+    dns_server_1: "{{ dns_server }}"
+    dns_server_2: "{{ vtepIPpoolSecondDns }}"
+targetClusters:
+  cluster1:
+    clusterName: "{{ hostPrepClusterA }}"
+  cluster2:
+    clusterName: "{{ hostPrepClusterB }}"
