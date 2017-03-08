@@ -5,7 +5,5 @@ files/postman-collection
 files/schemas
 files/LICENSE
 files/create_artifacts.sh
-files/nsxvapiv614.raml
+files/nsxvapi.raml
 files/readme.md
-tasks/base-config-nsx.yml
-tasks/deploy-nsx-ova.yml
