@@ -14,7 +14,7 @@ deployNtpServers: "{{ ntp_server }}"
 deploySyslogServer: "{{ syslog_server }}"
 deployHostname: "{{ deployVmName }}.{{ dns_domain_name }}"
 nsxEnPass: "{{ nsxCliPass }}"
-nsxmanOvaPath: '/home/vmware/data/nsx'
+nsxmanOvaPath: '/var/www/html/downloads'
 nsxmanOva: 'VMware-NSX-Manager-6.2.4-4292526.ova'
 ovfToolPath: '/usr/local/bin/ovftool'
 controllerSyslogServer: "{{ syslog_server }}"
