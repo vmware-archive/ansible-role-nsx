@@ -251,7 +251,7 @@
     - "{{ virt_wire_dev }}"
   tags: esg_create
 
-- name: Gather vCenter Edge Cluster moid
+- name: Gather vCenter Cluster moid
   vcenter_gather_moids:
     hostname: "{{ vcHostname }}"
     username: "{{ vcUser }}"
@@ -282,27 +282,6 @@
     datacenter_name: "{{ targetDatacenterName }}"
     portgroup_name: "{{ esg_vnic_ext_pg }}"
   register: esg_uplink_pg_moid
-  tags: esg_create
-
-- name: Gather vCenter NFS Portgroup moid
-  vcenter_gather_moids:
-    hostname: "{{ vcHostname }}"
-    username: "{{ vcUser }}"
-    password: "{{ vcPassword }}"
-    validate_certs: False
-    datacenter_name: "{{ targetDatacenterName }}"
-    portgroup_name: "{{ esg_vnic_nfs_pg }}"
-  register: esg_nfs_pg_moid
-  tags: esg_create
-
-- name: debug moids
-  debug: msg="{{ item }}"
-  with_items:
-    - "{{ esg_cluster_moid.object_id }}"
-    - "{{ esg_cluster_moid.datacenter_moid }}"
-    - "{{ esg_cluster_ds_moid.object_id }}"
-    - "{{ esg_uplink_pg_moid.object_id }}"
-    - "{{ esg_nfs_pg_moid.object_id }}"
   tags: esg_create
 
 - name: ESG creation DEV
