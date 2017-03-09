@@ -233,3 +233,111 @@
       - "{{ vcenter_compute_cluster_moid.object_id }}"
   register: transport_zone
   tags: nsx_transport_zone
+
+- name: Create NSX Logical Switch
+  nsx_logical_switch:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: "{{ global_state }}"
+    name: "{{ virtwire_dev_name }}"
+    description: "{{ virtwire_dev_desc }}"
+    transportzone: "{{ transportZoneName }}"
+    controlplanemode: "{{ virtwire_dev_mode }}"
+  register: virt_wire_dev
+  tags: esg_create
+
+- name: debug virt wire create
+  debug: msg="{{ item }}"
+  with_items:
+    - "{{ virt_wire_dev }}"
+  tags: esg_create
+
+- name: Gather vCenter Edge Cluster moid
+  vcenter_gather_moids:
+    hostname: "{{ vcHostname }}"
+    username: "{{ vcUser }}"
+    password: "{{ vcPassword }}"
+    validate_certs: False
+    datacenter_name: "{{ targetDatacenterName }}"
+    cluster_name: "{{ esg_cluster }}"
+  register: esg_cluster_moid
+  tags: esg_create
+
+- name: Gather vCenter Edge Cluster Datastore moid
+  vcenter_gather_moids:
+    hostname: "{{ vcHostname }}"
+    username: "{{ vcUser }}"
+    password: "{{ vcPassword }}"
+    validate_certs: False
+    datacenter_name: "{{ targetDatacenterName }}"
+    datastore_name: "{{ esg_datastore }}"
+  register: esg_cluster_ds_moid
+  tags: esg_create
+
+- name: Gather vCenter Uplink Portgroup moid
+  vcenter_gather_moids:
+    hostname: "{{ vcHostname }}"
+    username: "{{ vcUser }}"
+    password: "{{ vcPassword }}"
+    validate_certs: False
+    datacenter_name: "{{ targetDatacenterName }}"
+    portgroup_name: "{{ esg_vnic_ext_pg }}"
+  register: esg_uplink_pg_moid
+  tags: esg_create
+
+- name: Gather vCenter NFS Portgroup moid
+  vcenter_gather_moids:
+    hostname: "{{ vcHostname }}"
+    username: "{{ vcUser }}"
+    password: "{{ vcPassword }}"
+    validate_certs: False
+    datacenter_name: "{{ targetDatacenterName }}"
+    portgroup_name: "{{ esg_vnic_nfs_pg }}"
+  register: esg_nfs_pg_moid
+  tags: esg_create
+
+- name: debug moids
+  debug: msg="{{ item }}"
+  with_items:
+    - "{{ esg_cluster_moid.object_id }}"
+    - "{{ esg_cluster_moid.datacenter_moid }}"
+    - "{{ esg_cluster_ds_moid.object_id }}"
+    - "{{ esg_uplink_pg_moid.object_id }}"
+    - "{{ esg_nfs_pg_moid.object_id }}"
+  tags: esg_create
+
+- name: ESG creation DEV
+  nsx_edge_router:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: "{{ global_state }}"
+    name: "{{ esg_dev_name }}"
+    description: "{{ esg_dev_desc }}"
+    resourcepool_moid: "{{ esg_cluster_moid.object_id }}"
+    datastore_moid: "{{ esg_cluster_ds_moid.object_id }}"
+    datacenter_moid: "{{ esg_cluster_moid.datacenter_moid }}"
+    interfaces:
+      vnic0: {ip: "{{ esg_dev_vnic0_ip }}", prefix_len: "{{ esg_dev_vnic0_cider | int }}", portgroup_id: "{{ esg_uplink_pg_moid.object_id }}", name: "{{ esg_dev_vnic0_name }}", iftype: "{{ esg_dev_vnic0_iftype}}" }
+      vnic1: {ip: "{{ esg_dev_vnic1_ip }}", prefix_len: "{{ esg_dev_vnic1_cider | int }}", logical_switch: "{{ virtwire_dev_name }}", name: "{{ esg_dev_vnic1_name }}", iftype: "{{ esg_dev_vnic1_iftype }}" }
+    default_gateway: "{{ esg_dev_default_gwy }}"
+    remote_access: "{{ esg_dev_remote_access }}"
+    username: "{{ esg_dev_username }}"
+    password: "{{ esg_dev_password }}"
+    firewall: "{{ esg_dev_firewall }}"
+    ha_enabled: "{{ esg_dev_ha }}"
+    appliance_size: "{{ esg_dev_size }}"
+  register: create_esg_dev
+  tags: esg_create
+
+- name: Update esg default fw rules DEV
+  nsx_edge_firewall:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    esg_name: "{{ esg_dev_name }}"
+    firewall_ipsets:
+      ipset: False
+      inheritance: False
+    firewall_default:
+      action: "{{ esg_fw_default_action_dev }}"
+      only: True
+    state: "{{ global_state }}"
+  register: esg_fw_results
+  tags:
+    - esg_fw
