@@ -316,6 +316,19 @@
     firewall_default:
       action: "{{ esg_fw_default_action_dev }}"
       only: True
+    firewall_rules:
+      - name: 'allow_external_access'
+        loggingEnabled: 'false'
+        matchTranslated: 'false'
+        destination:
+          exclude: 'false'
+          ipAddress: '10.159.16.0/24'
+        enabled: 'true'
+        source:
+          exclude: 'false'
+          ipAddress: '10.159.17.0/24'
+        action: 'accept'
+        description: 'this is a fake fw rule'
     state: "{{ global_state }}"
   register: esg_fw_results
   tags:
