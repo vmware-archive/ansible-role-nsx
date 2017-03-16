@@ -309,7 +309,7 @@
 - name: Update esg default fw rules DEV
   nsx_edge_firewall:
     nsxmanager_spec: "{{ nsxmanager_spec }}"
-    esg_name: "{{ esg_dev_name }}"
+    edge_name: "{{ esg_dev_name }}"
     firewall_ipsets:
       ipset: False
       inheritance: False
