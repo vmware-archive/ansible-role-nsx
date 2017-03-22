@@ -37,6 +37,7 @@
     username: "{{ deployVcUser }}"
     password: "{{ deployVcPassword }}"
     validate_certs: False
+    state: "{{ global_state }}"
   register: deploy_nsx_man
   tags: nsx_deploy_ova
 
