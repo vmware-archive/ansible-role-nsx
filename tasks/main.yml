@@ -186,17 +186,17 @@
   register: vtep_ip_pool
   tags: vtep_nsx_ippools
 
-#- name: VXLAN Prep (configure VTEP) on compute cluster
-#  nsx_vxlan_prep:
-#    nsxmanager_spec: "{{ nsxmanager_spec }}"
-#    state: present
-#    cluster_moid: "{{ vcenter_compute_cluster_moid.object_id }}"
-#    dvs_moid: "{{ compute_vcenter_dvs_moid.object_id }}"
-#    ippool_id: "{{ vtep_ip_pool.ippool_id }}"
-#    vlan_id: "{{ vxlan_vlan_id }}"
-#    teaming: "{{ vxlan_teaming }}"
-#  register: vxlan_prep
-#  tags: nsx_vxlan_prep
+- name: VXLAN Prep (configure VTEP) on compute cluster
+  nsx_vxlan_prep:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: present
+    cluster_moid: "{{ vcenter_compute_cluster_moid.object_id }}"
+    dvs_moid: "{{ edge_vcenter_dvs_moid.object_id }}"
+    ippool_id: "{{ vtep_ip_pool.ippool_id }}"
+    vlan_id: "{{ vxlan_vlan_id }}"
+    teaming: "{{ vxlan_teaming }}"
+  register: vxlan_prep
+  tags: nsx_vxlan_prep
 
 - name: VXLAN Prep (configure VTEP) on Edge cluster
   nsx_vxlan_prep:
