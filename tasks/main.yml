@@ -150,16 +150,16 @@
   register: cluster_prep_mgmt
   tags: nsx_cluster_prep
 
-- name: Gather vCenter Transport DVS moid Compute
-  vcenter_gather_moids:
-    hostname: "{{ vcHostname }}"
-    username: "{{ vcUser }}"
-    password: "{{ vcPassword }}"
-    validate_certs: False
-    datacenter_name: "{{ targetDatacenterName }}"
-    dvs_name: "{{ vxlan_compute_vds }}"
-  register: compute_vcenter_dvs_moid
-  tags: vsphere_facts
+#- name: Gather vCenter Transport DVS moid Compute
+#  vcenter_gather_moids:
+#    hostname: "{{ vcHostname }}"
+#    username: "{{ vcUser }}"
+#    password: "{{ vcPassword }}"
+#    validate_certs: False
+#    datacenter_name: "{{ targetDatacenterName }}"
+#    dvs_name: "{{ vxlan_compute_vds }}"
+#  register: compute_vcenter_dvs_moid
+#  tags: vsphere_facts
 
 - name: Gather vCenter Transport DVS moid Edge
   vcenter_gather_moids:
@@ -186,17 +186,17 @@
   register: vtep_ip_pool
   tags: vtep_nsx_ippools
 
-- name: VXLAN Prep (configure VTEP) on compute cluster
-  nsx_vxlan_prep:
-    nsxmanager_spec: "{{ nsxmanager_spec }}"
-    state: present
-    cluster_moid: "{{ vcenter_compute_cluster_moid.object_id }}"
-    dvs_moid: "{{ compute_vcenter_dvs_moid.object_id }}"
-    ippool_id: "{{ vtep_ip_pool.ippool_id }}"
-    vlan_id: "{{ vxlan_vlan_id }}"
-    teaming: "{{ vxlan_teaming }}"
-  register: vxlan_prep
-  tags: nsx_vxlan_prep
+#- name: VXLAN Prep (configure VTEP) on compute cluster
+#  nsx_vxlan_prep:
+#    nsxmanager_spec: "{{ nsxmanager_spec }}"
+#    state: present
+#    cluster_moid: "{{ vcenter_compute_cluster_moid.object_id }}"
+#    dvs_moid: "{{ compute_vcenter_dvs_moid.object_id }}"
+#    ippool_id: "{{ vtep_ip_pool.ippool_id }}"
+#    vlan_id: "{{ vxlan_vlan_id }}"
+#    teaming: "{{ vxlan_teaming }}"
+#  register: vxlan_prep
+#  tags: nsx_vxlan_prep
 
 - name: VXLAN Prep (configure VTEP) on Edge cluster
   nsx_vxlan_prep:
