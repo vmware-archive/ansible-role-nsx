@@ -7,7 +7,7 @@ nsxmanager_spec:
   user: 'admin'
   password: "{{ nsxCliPass }}"
 
-controllerDeployType: 'full'
+controllerDeployType: "{{ controllerDeploymentType }}"
 deployMgmtDnsServer: "{{ dns_server }}"
 deployMgmtDnsDomain: "{{ dns_domain_name }}"
 deployNtpServers: "{{ ntp_server }}"
