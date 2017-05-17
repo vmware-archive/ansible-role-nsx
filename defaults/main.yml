@@ -18,6 +18,7 @@ nsxmanOvaPath: '/var/www/html/downloads'
 nsxmanOva: 'VMware-NSX-Manager-6.2.4-4292526.ova'
 ovfToolPath: '/usr/local/bin/ovftool'
 controllerSyslogServer: "{{ syslog_server }}"
+controllerDeployCluster: "{{ nsxControllerVcCluster }}"
 mcastEnabled: False
 mcastAddrStart: ""
 mcastAddrEnd: ""
