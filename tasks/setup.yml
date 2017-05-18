@@ -14,15 +14,20 @@
 #  limitations under the License.
 #
 ---
-- name: Setup
-  include: setup.yml
+- name: Install nsxramlclient
+  become: yes
+  pip: name={{ item }}
+  with_items:
+    - nsxramlclient
+  tags: nsx_setup
 
-- name: Deploy and Configure NSX
-  include: nsx_deploy_configure.yml
+- name: Verify nsxapi raml file present
+  stat:
+    path: "{{ nsxmanager_spec.raml_file }}"
+  register: nsx_raml_file
+  tags: nsx_setup
 
-- name: Create NSX Logical Switch and ESG
-  include: nsx_switch_edge.yml
-
-
-
-
+- name: Verify nsxvapi raml file present
+  debug: msg="{{ nsx_raml_file }}"
+  failed_when: not nsx_raml_file.stat.exists
+  tags: nsx_setup

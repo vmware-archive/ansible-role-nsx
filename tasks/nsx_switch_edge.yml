@@ -1,0 +1,89 @@
+#
+#  Copyright 2015 VMware, Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+---
+- name: Create NSX Logical Switch 
+  nsx_logical_switch:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: "{{ global_state }}"
+    name: "{{ virtwire_dev_name }}"
+    description: "{{ virtwire_dev_desc }}"
+    transportzone: "{{ transportZoneName }}"
+    controlplanemode: "{{ virtwire_dev_mode }}"
+  register: virt_wire_dev
+  tags: esg_create
+
+- name: Gather vCenter ESG Cluster moid
+  vcenter_gather_moids:
+    hostname: "{{ vcHostname }}"
+    username: "{{ vcUser }}"
+    password: "{{ vcPassword }}"
+    validate_certs: False
+    datacenter_name: "{{ targetDatacenterName }}"
+    cluster_name: "{{ esg_cluster }}"
+  register: esg_cluster_moid
+  tags: esg_create
+
+- name: Gather vCenter Edge Cluster Datastore moid
+  vcenter_gather_moids:
+    hostname: "{{ vcHostname }}"
+    username: "{{ vcUser }}"
+    password: "{{ vcPassword }}"
+    validate_certs: False
+    datacenter_name: "{{ targetDatacenterName }}"
+    datastore_name: "{{ esg_datastore }}"
+  register: esg_cluster_ds_moid
+  tags: esg_create
+
+- name: Gather vCenter Uplink Portgroup moid
+  vcenter_gather_moids:
+    hostname: "{{ vcHostname }}"
+    username: "{{ vcUser }}"
+    password: "{{ vcPassword }}"
+    validate_certs: False
+    datacenter_name: "{{ targetDatacenterName }}"
+    portgroup_name: "{{ esg_vnic_ext_pg }}"
+  register: esg_uplink_pg_moid
+  tags: esg_create
+
+- name: debug esg vars 
+  debug: msg="{{ item.name }} | {{ item.id }}"
+  with_items:
+    - { name: 'cluster moid', id: "{{ esg_cluster_moid.object_id }}" }
+    - { name: 'datastore moid', id: "{{ esg_cluster_ds_moid.object_id }}" }
+    - { name: 'uplink moid', id: "{{ esg_uplink_pg_moid.object_id }}" }
+  tags: esg_create
+
+- name: ESG creation
+  nsx_edge_router:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: "{{ global_state }}"
+    name: "{{ esg_dev_name }}"
+    description: "{{ esg_dev_desc }}"
+    resourcepool_moid: "{{ esg_cluster_moid.object_id }}"
+    datastore_moid: "{{ esg_cluster_ds_moid.object_id }}"
+    datacenter_moid: "{{ esg_cluster_moid.datacenter_moid }}"
+    interfaces:
+      vnic0: {ip: "{{ esg_dev_vnic0_ip }}", prefix_len: "{{ esg_dev_vnic0_cider | int }}", portgroup_id: "{{ esg_uplink_pg_moid.object_id }}", name: "{{ esg_dev_vnic0_name }}", iftype: "{{ esg_dev_vnic0_iftype }}" }
+      vnic1: {ip: "{{ esg_dev_vnic1_ip }}", prefix_len: "{{ esg_dev_vnic1_cider | int }}", logical_switch: "{{ virtwire_dev_name }}", name: "{{ esg_dev_vnic1_name }}", iftype: "{{ esg_dev_vnic1_iftype }}" }
+    default_gateway: "{{ esg_dev_default_gwy }}"
+    remote_access: "{{ esg_dev_remote_access }}"
+    username: "{{ esg_dev_username }}"
+    password: "{{ esg_dev_password }}"
+    firewall: "{{ esg_dev_firewall }}"
+    ha_enabled: "{{ esg_dev_ha }}"
+    appliance_size: "{{ esg_dev_size }}"
+  register: create_esg_dev
+  tags: esg_create
