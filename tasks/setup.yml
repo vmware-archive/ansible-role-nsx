@@ -31,3 +31,14 @@
   debug: msg="{{ nsx_raml_file }}"
   failed_when: not nsx_raml_file.stat.exists
   tags: nsx_setup
+
+- name: Verify nsx ova present in specified directory
+  stat:
+    path: "{{ nsxmanOvaPath }}/{{ nsxmanOva }}"
+  register: nsx_ova
+  tags: nsx_setup
+
+- name: Verify nsx ova present in specified directory
+  debug: msg="{{ nsx_ova }}"
+  failed_when: not nsx_ova.stat.exists
+  tags: nsx_setup
