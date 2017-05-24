@@ -1,0 +1,135 @@
+#
+#  Copyright 2015 VMware, Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+---
+- name: Delete Transport Zone
+  nsx_transportzone:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    name: "{{ transportZoneName }}"
+    controlplanemode: "{{ defaultControllPlaneMode }}"
+    description: "{{ transportZoneDescription }}"
+    cluster_moid_list:
+      - "{{ vcenter_edge_cluster_moid.object_id }}"
+      - "{{ vcenter_compute_cluster_moid.object_id }}"
+  register: del_transport_zone
+  tags: delete_nsx_transport_zone
+
+- name: Delete Segment Id Pool
+  nsx_segment_id_pool:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    idpoolstart: "{{ segmentIdPoolStart }}"
+    idpoolend: "{{ segmentIdPoolEnd }}"
+    mcast_enabled: "{{ mcastEnabled }}"
+    mcastpoolstart: "{{ mcastAddrStart }}"
+    mcastpoolend: "{{ mcastAddrEnd }}"
+  register: del_segment_pool
+  tags: delete_nsx_segment_pool
+
+- name: Get VTEP IP Pool ID
+  nsx_ippool:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'present'
+    name: "{{ nsxIppools.vteps.name }}"
+    start_ip: "{{ nsxIppools.vteps.start_ip }}"
+    end_ip: "{{ nsxIppools.vteps.end_ip }}"
+    prefix_length: "{{ nsxIppools.vteps.prefix_length }}"
+    gateway: "{{ nsxIppools.vteps.gateway }}"
+    dns_server_1: "{{ nsxIppools.vteps.dns_server_1 }}"
+    dns_server_2: "{{ nsxIppools.vteps.dns_server_2 }}"
+  register: vtep_ip_pool
+  tags: delete_nsx_vxlan_prep
+
+- name: Unconfigure VXLAN on Edge cluster
+  nsx_vxlan_prep:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    cluster_moid: "{{ vcenter_edge_cluster_moid.object_id }}"
+    dvs_moid: "{{ vcenter_dvs_moid.object_id }}"
+    ippool_id: "{{ vtep_ip_pool.ippool_id }}"
+    vlan_id: "{{ vxlan_vlan_id }}"
+    teaming: "{{ vxlan_teaming }}"
+  register: vxlan_prep
+  tags: delete_nsx_vxlan_prep
+
+- name: Unconfigure VXLAN on compute cluster
+  nsx_vxlan_prep:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    cluster_moid: "{{ vcenter_compute_cluster_moid.object_id }}"
+    dvs_moid: "{{ vcenter_dvs_moid.object_id }}"
+    ippool_id: "{{ vtep_ip_pool.ippool_id }}"
+    vlan_id: "{{ vxlan_vlan_id }}"
+    teaming: "{{ vxlan_teaming }}"
+  register: vxlan_prep
+  tags: delete_nsx_vxlan_prep
+
+- name: Delete VTEP IP Pools
+  nsx_ippool:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    name: "{{ nsxIppools.vteps.name }}"
+    start_ip: "{{ nsxIppools.vteps.start_ip }}"
+    end_ip: "{{ nsxIppools.vteps.end_ip }}"
+    prefix_length: "{{ nsxIppools.vteps.prefix_length }}"
+    gateway: "{{ nsxIppools.vteps.gateway }}"
+    dns_server_1: "{{ nsxIppools.vteps.dns_server_1 }}"
+    dns_server_2: "{{ nsxIppools.vteps.dns_server_2 }}"
+  register: vtep_ip_pool
+  tags: delete_vtep_nsx_ippools
+
+- name: Uninstall VIBs the compute cluster
+  nsx_cluster_prep:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    cluster_moid: "{{ vcenter_compute_cluster_moid.object_id }}"
+  register: cluster_prep_compute
+  tags: delete_nsx_cluster_prep
+
+- name: Uninstall VIBs the mgmt and edge cluster
+  nsx_cluster_prep:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    cluster_moid: "{{ vcenter_edge_cluster_moid.object_id }}"
+  register: cluster_prep_mgmt
+  tags: delete_nsx_cluster_prep
+
+- name: Delete NSX Controller cluster
+  nsx_controllers:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    deploytype: "{{ controllerDeployType }}"
+    syslog_server: "{{ controllerSyslogServer }}"
+    ippool_id: "{{ controller_ip_pool.ippool_id }}"
+    resourcepool_moid: "{{ vcenter_controller_cluster_moid.object_id }}"
+    datastore_moid: "{{ vcenter_mgmt_datastore_moid.object_id }}"
+    network_moid: "{{ vcenter_mgmt_portgroup_moid.object_id }}"
+    password: "{{ controllerPassword }}"
+  tags: delete_nsx_controllers
+
+- name: Delete IP Controller IP Pools
+  nsx_ippool:
+    nsxmanager_spec: "{{ nsxmanager_spec }}"
+    state: 'absent'
+    name: "{{ nsxIppools.controller.name }}"
+    start_ip: "{{ nsxIppools.controller.start_ip }}"
+    end_ip: "{{ nsxIppools.controller.end_ip }}"
+    prefix_length: "{{ nsxIppools.controller.prefix_length }}"
+    gateway: "{{ nsxIppools.controller.gateway }}"
+    dns_server_1: "{{ nsxIppools.controller.dns_server_1 }}"
+    dns_server_2: "{{ nsxIppools.controller.dns_server_2 }}"
+  register: controller_ip_pool
+  tags: delete_controller_nsx_ippools

@@ -23,6 +23,8 @@
 - name: Create NSX Logical Switch and ESG
   include: nsx_switch_edge.yml
 
+- name: Delete NSX
+  include: delete_nsx.yml
 
 
 
