@@ -1,5 +1,6 @@
 ---
 global_state: "{{ desired_state }}"
+deploy_nsx_ova: ""
 
 nsxmanager_spec:
   raml_file: '/opt/chaperone-ansible/roles/nsx/files/nsxvapi.raml'

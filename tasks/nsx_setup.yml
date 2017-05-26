@@ -36,9 +36,11 @@
   stat:
     path: "{{ nsxmanOvaPath }}/{{ nsxmanOva }}"
   register: nsx_ova
+  when: deploy_nsx_ova
   tags: nsx_setup
 
 - name: Verify nsx ova present in specified directory
   debug: msg="{{ nsx_ova }}"
   failed_when: not nsx_ova.stat.exists
+  when: deploy_nsx_ova
   tags: nsx_setup

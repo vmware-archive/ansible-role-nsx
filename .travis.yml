@@ -3,13 +3,17 @@ language: python
 python: "2.7"
 
 # Use the new container infrastructure
-sudo: false
+sudo: required
 
 # Install ansible
 addons:
   apt:
     packages:
     - python-pip
+
+before_install:
+  - export FILES_DIR=../files
+  - export RAML_REPO=https://github.com/vmware/nsxraml/blob/master/nsxvapi.raml
 
 install:
   # Install ansible
@@ -22,8 +26,12 @@ install:
   - printf '[defaults]\nroles_path=../' >ansible.cfg
 
 script:
-  # Basic role syntax check
+  # Get nsxvapi raml file
+  - wget -O $FILES_DIR/nsxvapi.raml $RAML_REPO
+  # Basic check
   - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+  # Test role setup
+  - ansible-playbook -v tests/test.yml -i tests/inventory --extra-vars "deploy_nsx_ova=false" --connection=local --sudo --tags nsx_setup
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

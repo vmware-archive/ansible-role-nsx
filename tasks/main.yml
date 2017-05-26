@@ -15,7 +15,7 @@
 #
 ---
 - name: Setup
-  include: setup.yml
+  include: nsx_setup.yml
 
 - name: Deploy and Configure NSX
   include: nsx_deploy_configure.yml
@@ -25,6 +25,3 @@
 
 - name: Delete NSX
   include: delete_nsx.yml
-
-
-
