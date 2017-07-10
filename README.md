@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/jdatx/ansible-role-nsx.svg?branch=master)](https://travis-ci.org/jdatx/ansible-role-nsx)
-
 # ansible-role-nsx
+
+[![Build Status](https://travis-ci.org/jdatx/ansible-role-nsx.svg?branch=master)](https://travis-ci.org/jdatx/ansible-role-nsx)
 
 Ansible playbook to automate installing and maintaining VMware NSX.
 
