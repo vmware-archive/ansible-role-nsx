@@ -6,7 +6,7 @@ Ansible playbook to automate installing and maintaining VMware NSX.
 
 ## Requirements
 * nsx api endpoint
-* nsxramlclient
+* [nsxramlclient](https://github.com/vmware/nsxramlclient)
 * [ovftool](https://my.vmware.com/web/vmware/details?downloadGroup=OVFTOOL400&productId=353)
 * nsx raml file which can be found [here](https://github.com/vmware/nsxraml/blob/master/nsxvapi.raml)
 * nsx ansible modules which can be found [here](https://github.com/vmware/nsxansible)
@@ -15,12 +15,17 @@ Ansible playbook to automate installing and maintaining VMware NSX.
 ## Role Variables
 
 ```yaml
+# Playbook Variables
+deploy_nsx_ova: (bool)
 # local dir containing nsx ova
 nsxmanOvaPath: '/var/www/html/downloads'
 # nsx ova being deployed
 nsxmanOva: 'VMware-NSX-Manager-6.2.4-4292526.ova'
 # path to ovftool
 ovfToolPath: '/usr/local/bin/ovftool'
+# Raml File location
+nsx_raml_file_path: '/path/to/raml/file'
+#
 ```
 
 ## Example playbook
